@@ -23,6 +23,7 @@ from .const import (
     ATTR_ORDER_NUMBER,
     ATTR_PRODUCT_NAME,
     ATTR_STATUS,
+    DEFAULT_SCAN_INTERVAL,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -33,17 +34,21 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up the Amazon Package Tracker sensor."""
-    coordinator = AmazonTrackerCoordinator(hass, entry)
-    await coordinator.async_config_entry_first_refresh()
+    try:
+        coordinator = AmazonTrackerCoordinator(hass, entry)
+        await coordinator.async_config_entry_first_refresh()
 
-    # Add individual package sensors
-    async_add_entities(
-        AmazonPackageSensor(coordinator, package)
-        for package in coordinator.data
-    )
+        # Add individual package sensors
+        async_add_entities(
+            AmazonPackageSensor(coordinator, package)
+            for package in coordinator.data
+        )
 
-    # Add pending packages sensor
-    async_add_entities([PendingPackagesSensor(coordinator)])
+        # Add pending packages sensor
+        async_add_entities([PendingPackagesSensor(coordinator)])
+    except Exception as err:
+        _LOGGER.error("Error setting up Amazon Package Tracker: %s", err)
+        return False
 
 class AmazonTrackerCoordinator(DataUpdateCoordinator):
     """My Amazon Package Tracker coordinator."""
@@ -54,34 +59,40 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name="Amazon Package Tracker",
-            update_interval=entry.data.get("scan_interval"),
+            update_interval=entry.data.get("scan_interval", DEFAULT_SCAN_INTERVAL),
         )
         self.entry = entry
+        self._email = entry.data.get("email")
+        self._password = entry.data.get("password")
 
     async def _async_update_data(self) -> list[dict[str, Any]]:
         """Fetch data from Amazon."""
-        # Here you would implement the actual Amazon API call
-        # For now, we'll return dummy data
-        return [
-            {
-                ATTR_TRACKING_NUMBER: "123456789",
-                ATTR_CARRIER: "DHL",
-                ATTR_ESTIMATED_DELIVERY: datetime.now().isoformat(),
-                ATTR_ORDER_DATE: datetime.now().isoformat(),
-                ATTR_ORDER_NUMBER: "ORDER123",
-                ATTR_PRODUCT_NAME: "Test Product",
-                ATTR_STATUS: "In Transit",
-            },
-            {
-                ATTR_TRACKING_NUMBER: "987654321",
-                ATTR_CARRIER: "DPD",
-                ATTR_ESTIMATED_DELIVERY: (datetime.now().replace(day=datetime.now().day + 2)).isoformat(),
-                ATTR_ORDER_DATE: datetime.now().isoformat(),
-                ATTR_ORDER_NUMBER: "ORDER456",
-                ATTR_PRODUCT_NAME: "Another Product",
-                ATTR_STATUS: "Ordered",
-            }
-        ]
+        try:
+            # Here you would implement the actual Amazon API call
+            # For now, we'll return dummy data
+            return [
+                {
+                    ATTR_TRACKING_NUMBER: "123456789",
+                    ATTR_CARRIER: "DHL",
+                    ATTR_ESTIMATED_DELIVERY: datetime.now().isoformat(),
+                    ATTR_ORDER_DATE: datetime.now().isoformat(),
+                    ATTR_ORDER_NUMBER: "ORDER123",
+                    ATTR_PRODUCT_NAME: "Test Product",
+                    ATTR_STATUS: "In Transit",
+                },
+                {
+                    ATTR_TRACKING_NUMBER: "987654321",
+                    ATTR_CARRIER: "DPD",
+                    ATTR_ESTIMATED_DELIVERY: (datetime.now().replace(day=datetime.now().day + 2)).isoformat(),
+                    ATTR_ORDER_DATE: datetime.now().isoformat(),
+                    ATTR_ORDER_NUMBER: "ORDER456",
+                    ATTR_PRODUCT_NAME: "Another Product",
+                    ATTR_STATUS: "Ordered",
+                }
+            ]
+        except Exception as err:
+            _LOGGER.error("Error fetching Amazon data: %s", err)
+            return []
 
 class AmazonPackageSensor(CoordinatorEntity, SensorEntity):
     """Representation of an Amazon Package Tracker sensor."""

@@ -11,12 +11,13 @@
             }
         },
         "error": {
-            "invalid_auth": "Ungültige Anmeldedaten",
-            "cannot_connect": "Verbindung zu Amazon nicht möglich",
-            "unknown": "Unbekannter Fehler"
+            "invalid_auth": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail und Ihr Passwort.",
+            "cannot_connect": "Verbindung zu Amazon nicht möglich. Bitte überprüfen Sie Ihre Internetverbindung.",
+            "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
         },
         "abort": {
-            "already_configured": "Diese Amazon-Konto ist bereits konfiguriert"
+            "already_configured": "Diese Amazon-Konto ist bereits konfiguriert",
+            "reauth_successful": "Erneute Authentifizierung erfolgreich"
         }
     }
 } 

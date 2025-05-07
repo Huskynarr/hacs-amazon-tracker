@@ -32,6 +32,10 @@ class AmazonTrackerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 if not user_input.get(CONF_EMAIL) or not user_input.get(CONF_PASSWORD):
                     raise InvalidAuth("Email and password are required")
 
+                # Check if this config entry exists
+                await self.async_set_unique_id(user_input[CONF_EMAIL])
+                self._abort_if_unique_id_configured()
+
                 # Here you would validate the credentials with Amazon
                 # For now, we'll just accept any input
                 return self.async_create_entry(
@@ -43,8 +47,8 @@ class AmazonTrackerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 )
             except InvalidAuth:
                 errors["base"] = "invalid_auth"
-            except Exception:  # pylint: disable=broad-except
-                _LOGGER.exception("Unexpected exception")
+            except Exception as err:  # pylint: disable=broad-except
+                _LOGGER.exception("Unexpected exception: %s", err)
                 errors["base"] = "unknown"
 
         return self.async_show_form(
@@ -54,7 +58,14 @@ class AmazonTrackerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 vol.Required(CONF_PASSWORD): str,
             }),
             errors=errors,
+            description_placeholders={
+                "error": errors.get("base", "") if errors else "",
+            },
         )
+
+    async def async_step_import(self, import_info: dict[str, Any]) -> FlowResult:
+        """Handle import from configuration.yaml."""
+        return await self.async_step_user(import_info)
 
 class InvalidAuth(HomeAssistantError):
     """Error to indicate there is invalid auth."""
