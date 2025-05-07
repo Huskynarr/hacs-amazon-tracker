@@ -28,12 +28,21 @@ class AmazonTrackerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
+                # Validate the credentials
+                if not user_input.get(CONF_EMAIL) or not user_input.get(CONF_PASSWORD):
+                    raise InvalidAuth("Email and password are required")
+
                 # Here you would validate the credentials with Amazon
                 # For now, we'll just accept any input
                 return self.async_create_entry(
                     title=user_input[CONF_EMAIL],
-                    data=user_input,
+                    data={
+                        CONF_EMAIL: user_input[CONF_EMAIL],
+                        CONF_PASSWORD: user_input[CONF_PASSWORD],
+                    },
                 )
+            except InvalidAuth:
+                errors["base"] = "invalid_auth"
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
