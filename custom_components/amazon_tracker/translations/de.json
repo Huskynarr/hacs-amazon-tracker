@@ -1,0 +1,22 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Amazon Anmeldedaten",
+                "description": "Bitte geben Sie Ihre Amazon-Anmeldedaten ein",
+                "data": {
+                    "email": "E-Mail",
+                    "password": "Passwort"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Ungültige Anmeldedaten",
+            "cannot_connect": "Verbindung zu Amazon nicht möglich",
+            "unknown": "Unbekannter Fehler"
+        },
+        "abort": {
+            "already_configured": "Diese Amazon-Konto ist bereits konfiguriert"
+        }
+    }
+} 
