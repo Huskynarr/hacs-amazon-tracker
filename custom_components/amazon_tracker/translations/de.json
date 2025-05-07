@@ -8,16 +8,23 @@
                     "email": "E-Mail",
                     "password": "Passwort"
                 }
+            },
+            "amazon_auth": {
+                "title": "Amazon Anmeldung",
+                "description": "Bitte melden Sie sich bei Amazon an und autorisieren Sie die Anwendung"
             }
         },
         "error": {
             "invalid_auth": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail und Ihr Passwort.",
             "cannot_connect": "Verbindung zu Amazon nicht möglich. Bitte überprüfen Sie Ihre Internetverbindung.",
-            "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
+            "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
+            "no_code": "Kein Autorisierungscode erhalten. Bitte versuchen Sie es erneut."
         },
         "abort": {
             "already_configured": "Diese Amazon-Konto ist bereits konfiguriert",
-            "reauth_successful": "Erneute Authentifizierung erfolgreich"
+            "reauth_successful": "Erneute Authentifizierung erfolgreich",
+            "invalid_auth": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail und Ihr Passwort.",
+            "no_code": "Kein Autorisierungscode erhalten. Bitte versuchen Sie es erneut."
         }
     }
 } 

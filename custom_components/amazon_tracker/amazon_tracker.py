@@ -12,8 +12,9 @@ async def fetch_amazon_packages(email: str, password: str) -> list[dict[str, Any
     async with aiohttp.ClientSession() as session:
         try:
             # First, get the login page to get the necessary cookies
-            async with session.get("https://www.amazon.de/ap/signin") as response:
+            async with session.get("https://www.amazon.de/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.de%2F%3Fref_%3Dnav_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=deflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0") as response:
                 if response.status != 200:
+                    _LOGGER.error("Failed to get login page. Status: %s, URL: %s", response.status, response.url)
                     raise Exception(f"Failed to get login page: {response.status}")
                 
                 # Get the login form
@@ -23,11 +24,13 @@ async def fetch_amazon_packages(email: str, password: str) -> list[dict[str, Any
                 # Find the login form
                 form = soup.find("form", {"name": "signIn"})
                 if not form:
+                    _LOGGER.error("Login form not found in HTML: %s", html[:500])  # Log first 500 chars of HTML
                     raise Exception("Login form not found")
                 
                 # Get the form action URL
                 action_url = form.get("action")
                 if not action_url:
+                    _LOGGER.error("Form action URL not found in form: %s", form)
                     raise Exception("Form action URL not found")
                 
                 # Prepare login data
@@ -43,11 +46,13 @@ async def fetch_amazon_packages(email: str, password: str) -> list[dict[str, Any
                 # Submit the login form
                 async with session.post(action_url, data=login_data) as login_response:
                     if login_response.status != 200:
+                        _LOGGER.error("Login failed. Status: %s, URL: %s", login_response.status, login_response.url)
                         raise Exception(f"Login failed: {login_response.status}")
                     
                     # Now get the order history
                     async with session.get("https://www.amazon.de/gp/css/order-history") as response:
                         if response.status != 200:
+                            _LOGGER.error("Failed to get order history. Status: %s, URL: %s", response.status, response.url)
                             raise Exception(f"Failed to get order history: {response.status}")
                         
                         html = await response.text()
