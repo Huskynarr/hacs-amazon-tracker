@@ -36,7 +36,8 @@ class AmazonTrackerCard extends HTMLElement {
                     font-weight: 500;
                 }
                 .package {
-                    display: flex;
+                    display: grid;
+                    grid-template-columns: 40px 1fr auto;
                     align-items: center;
                     padding: 12px;
                     margin-bottom: 8px;
@@ -47,22 +48,37 @@ class AmazonTrackerCard extends HTMLElement {
                 .carrier-logo {
                     width: 40px;
                     height: 40px;
-                    margin-right: 12px;
                 }
                 .package-info {
-                    flex-grow: 1;
+                    display: grid;
+                    grid-template-columns: 1fr auto;
+                    gap: 4px;
+                    margin-left: 12px;
+                }
+                .package-main {
+                    display: flex;
+                    flex-direction: column;
                 }
                 .package-name {
                     font-weight: 500;
-                    margin-bottom: 4px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 200px;
                 }
-                .package-status {
+                .package-carrier {
                     color: var(--secondary-text-color);
                     font-size: 14px;
                 }
-                .delivery-date {
+                .package-status {
                     color: var(--primary-color);
                     font-size: 14px;
+                    text-align: right;
+                }
+                .delivery-date {
+                    color: var(--secondary-text-color);
+                    font-size: 14px;
+                    text-align: right;
                 }
             </style>
         `;
@@ -84,17 +100,41 @@ class AmazonTrackerCard extends HTMLElement {
             entity => entity.entity_id.startsWith('sensor.amazon_package_')
         );
 
-        packagesDiv.innerHTML = packageEntities.map(entity => `
-            <div class="package">
-                <img class="carrier-logo" src="/local/carrier-logos/${entity.attributes.carrier.toLowerCase()}.png" 
-                     onerror="this.src='/local/carrier-logos/default.png'">
-                <div class="package-info">
-                    <div class="package-name">${entity.attributes.product_name}</div>
-                    <div class="package-status">${entity.state}</div>
-                    <div class="delivery-date">Expected: ${new Date(entity.attributes.estimated_delivery).toLocaleDateString()}</div>
+        // Sort by delivery date
+        packageEntities.sort((a, b) => {
+            const dateA = new Date(a.attributes.estimated_delivery);
+            const dateB = new Date(b.attributes.estimated_delivery);
+            return dateA - dateB;
+        });
+
+        packagesDiv.innerHTML = packageEntities.map(entity => {
+            const productName = entity.attributes.product_name;
+            const truncatedName = productName.length > 25 
+                ? productName.substring(0, 22) + '...' 
+                : productName;
+            
+            return `
+                <div class="package">
+                    <img class="carrier-logo" src="/local/carrier-logos/${entity.attributes.carrier.toLowerCase()}.png" 
+                         onerror="this.src='/local/carrier-logos/default.png'">
+                    <div class="package-info">
+                        <div class="package-main">
+                            <div class="package-name">${truncatedName}</div>
+                            <div class="package-carrier">${entity.attributes.carrier}</div>
+                        </div>
+                        <div class="package-status">
+                            <div>${entity.state}</div>
+                            <div class="delivery-date">${new Date(entity.attributes.estimated_delivery).toLocaleDateString()}</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
+    }
+
+    // Listen for state changes
+    connectedCallback() {
+        this.hass.connection.subscribeEvents(() => this.updateContent(), 'state_changed');
     }
 }
 
