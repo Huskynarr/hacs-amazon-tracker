@@ -48,34 +48,16 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self._email = user_input["email"]
                 self._password = user_input["password"]
 
-                # Generate Amazon login URL
-                hass_url = self.hass.config.external_url
-                if not hass_url:
-                    hass_url = self.hass.config.internal_url
-                
-                redirect_uri = AMAZON_REDIRECT_URI.format(base_url=hass_url)
-                
-                # Amazon OAuth parameters
-                params = {
-                    "openid.pape.max_auth_age": "0",
-                    "openid.return_to": f"{hass_url}/auth/external/callback",
-                    "openid.identity": "http://specs.openid.net/auth/2.0/identifier_select",
-                    "openid.assoc_handle": "deflex",
-                    "openid.mode": "checkid_setup",
-                    "openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select",
-                    "openid.ns": "http://specs.openid.net/auth/2.0",
-                    "client_id": "amzn1.application-oa2-client.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",  # Replace with your client ID
-                    "response_type": "code",
-                    "scope": "profile",
-                    "redirect_uri": redirect_uri
-                }
+                # Check if this config entry exists
+                await self.async_set_unique_id(self._email)
+                self._abort_if_unique_id_configured()
 
-                # Redirect to Amazon login
-                return self.async_external_step(
-                    step_id="amazon_auth",
-                    url=f"{AMAZON_AUTH_URL}?{urlencode(params)}",
-                    description_placeholders={
-                        "url": AMAZON_AUTH_URL,
+                # Create the config entry
+                return self.async_create_entry(
+                    title=f"Amazon Package Tracker ({self._email})",
+                    data={
+                        "email": self._email,
+                        "password": self._password,
                     },
                 )
 
@@ -93,46 +75,6 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             ),
             errors=errors,
         )
-
-    async def async_step_amazon_auth(
-        self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
-        """Handle the Amazon OAuth callback."""
-        if not user_input:
-            return self.async_abort(reason="no_code")
-
-        try:
-            # Verify the authentication
-            session = async_get_clientsession(self.hass)
-            async with session.post(
-                "https://api.amazon.com/auth/o2/token",
-                data={
-                    "grant_type": "authorization_code",
-                    "code": user_input["code"],
-                    "client_id": "amzn1.application-oa2-client.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",  # Replace with your client ID
-                    "client_secret": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",  # Replace with your client secret
-                    "redirect_uri": AMAZON_REDIRECT_URI.format(
-                        base_url=self.hass.config.external_url or self.hass.config.internal_url
-                    ),
-                },
-            ) as response:
-                if response.status != 200:
-                    raise InvalidAuth
-
-                # Create the config entry
-                return self.async_create_entry(
-                    title=f"Amazon Package Tracker ({self._email})",
-                    data={
-                        "email": self._email,
-                        "password": self._password,
-                    },
-                )
-
-        except InvalidAuth:
-            return self.async_abort(reason="invalid_auth")
-        except Exception as err:
-            _LOGGER.error("Error during Amazon OAuth callback: %s", err)
-            return self.async_abort(reason="unknown")
 
     async def async_step_import(self, import_info: dict[str, Any]) -> FlowResult:
         """Handle import from configuration.yaml."""
