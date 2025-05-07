@@ -36,10 +36,14 @@ async def async_setup_entry(
     coordinator = AmazonTrackerCoordinator(hass, entry)
     await coordinator.async_config_entry_first_refresh()
 
+    # Add individual package sensors
     async_add_entities(
         AmazonPackageSensor(coordinator, package)
         for package in coordinator.data
     )
+
+    # Add pending packages sensor
+    async_add_entities([PendingPackagesSensor(coordinator)])
 
 class AmazonTrackerCoordinator(DataUpdateCoordinator):
     """My Amazon Package Tracker coordinator."""
@@ -67,6 +71,15 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
                 ATTR_ORDER_NUMBER: "ORDER123",
                 ATTR_PRODUCT_NAME: "Test Product",
                 ATTR_STATUS: "In Transit",
+            },
+            {
+                ATTR_TRACKING_NUMBER: "987654321",
+                ATTR_CARRIER: "DPD",
+                ATTR_ESTIMATED_DELIVERY: (datetime.now().replace(day=datetime.now().day + 2)).isoformat(),
+                ATTR_ORDER_DATE: datetime.now().isoformat(),
+                ATTR_ORDER_NUMBER: "ORDER456",
+                ATTR_PRODUCT_NAME: "Another Product",
+                ATTR_STATUS: "Ordered",
             }
         ]
 
@@ -93,4 +106,41 @@ class AmazonPackageSensor(CoordinatorEntity, SensorEntity):
             ATTR_ORDER_DATE: self.package[ATTR_ORDER_DATE],
             ATTR_ORDER_NUMBER: self.package[ATTR_ORDER_NUMBER],
             ATTR_PRODUCT_NAME: self.package[ATTR_PRODUCT_NAME],
+        }
+
+class PendingPackagesSensor(CoordinatorEntity, SensorEntity):
+    """Representation of pending Amazon packages."""
+
+    def __init__(self, coordinator: AmazonTrackerCoordinator) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+        self._attr_name = "Amazon Pending Packages"
+        self._attr_unique_id = f"{DOMAIN}_pending_packages"
+        self._attr_icon = "mdi:package-variant"
+
+    @property
+    def native_value(self) -> str:
+        """Return the number of pending packages."""
+        pending = len([p for p in self.coordinator.data if p[ATTR_STATUS] != "Delivered"])
+        return str(pending)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes."""
+        pending_packages = [p for p in self.coordinator.data if p[ATTR_STATUS] != "Delivered"]
+        # Sort by estimated delivery date
+        pending_packages.sort(key=lambda x: x[ATTR_ESTIMATED_DELIVERY])
+        
+        return {
+            "packages": [
+                {
+                    ATTR_PRODUCT_NAME: p[ATTR_PRODUCT_NAME],
+                    ATTR_CARRIER: p[ATTR_CARRIER],
+                    ATTR_STATUS: p[ATTR_STATUS],
+                    ATTR_ESTIMATED_DELIVERY: p[ATTR_ESTIMATED_DELIVERY],
+                    ATTR_TRACKING_NUMBER: p[ATTR_TRACKING_NUMBER],
+                    ATTR_ORDER_NUMBER: p[ATTR_ORDER_NUMBER],
+                }
+                for p in pending_packages
+            ]
         } 

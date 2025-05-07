@@ -48,10 +48,25 @@ This repository contains both a HACS custom component and a Home Assistant add-o
 
 ## Usage
 
-After installation, you can add the following to your dashboard:
+After installation, you can add the following cards to your dashboard:
 
+### All Packages Card
 ```yaml
 type: custom:amazon-tracker-card
+```
+
+### Pending Packages Card
+```yaml
+type: custom:pending-packages-card
+```
+
+### Example Dashboard Configuration
+```yaml
+views:
+  - title: "Amazon Pakete"
+    cards:
+      - type: custom:pending-packages-card
+      - type: custom:amazon-tracker-card
 ```
 
 ## Features
@@ -61,6 +76,8 @@ type: custom:amazon-tracker-card
 - Show shipping carrier logos
 - Automatic updates of delivery status
 - Easy configuration through Home Assistant UI
+- Separate view for pending packages
+- Sorting by expected delivery date
 
 ## Support
 
