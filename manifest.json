@@ -1,0 +1,12 @@
+{
+    "domain": "amazon_tracker",
+    "name": "Amazon Package Tracker",
+    "codeowners": ["@huskynarr"],
+    "config_flow": true,
+    "dependencies": [],
+    "documentation": "https://github.com/huskynarr/hacs-amazon-tracker",
+    "iot_class": "cloud_polling",
+    "issue_tracker": "https://github.com/huskynarr/hacs-amazon-tracker/issues",
+    "requirements": [],
+    "version": "0.0.1"
+} 
