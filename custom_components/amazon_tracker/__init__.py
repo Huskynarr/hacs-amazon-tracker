@@ -17,15 +17,6 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = [Platform.SENSOR]
 
-# This is the schema that used to display the integration in the UI
-CONFIG_SCHEMA = vol.Schema({
-    DOMAIN: vol.Schema({
-        vol.Required("email"): str,
-        vol.Required("password"): str,
-        vol.Optional("scan_interval", default=DEFAULT_SCAN_INTERVAL): cv.time_period,
-    })
-})
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Amazon Package Tracker from a config entry."""
     hass.data.setdefault(DOMAIN, {})

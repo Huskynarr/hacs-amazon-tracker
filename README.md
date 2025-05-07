@@ -24,6 +24,8 @@ This repository contains both a HACS custom component and a Home Assistant add-o
 4. Enter your Amazon credentials
 5. The integration will automatically fetch your active orders
 
+> **Important**: Do not add any configuration to your `configuration.yaml` file. This integration is configured through the UI only.
+
 ## Home Assistant Add-on
 
 ### Installation
@@ -78,6 +80,14 @@ views:
 - Easy configuration through Home Assistant UI
 - Separate view for pending packages
 - Sorting by expected delivery date
+
+## Troubleshooting
+
+If you encounter the error "Invalid config for 'amazon_tracker'", please:
+1. Remove any amazon_tracker configuration from your configuration.yaml
+2. Remove the integration from Home Assistant
+3. Restart Home Assistant
+4. Add the integration again through the UI
 
 ## Support
 
