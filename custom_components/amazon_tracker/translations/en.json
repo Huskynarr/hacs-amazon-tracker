@@ -1,0 +1,23 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Amazon Credentials",
+                "description": "Please enter your Amazon credentials",
+                "data": {
+                    "email": "Email",
+                    "password": "Password"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Invalid credentials. Please check your email and password.",
+            "cannot_connect": "Unable to connect to Amazon. Please check your internet connection.",
+            "unknown": "An unexpected error occurred. Please try again later."
+        },
+        "abort": {
+            "already_configured": "This Amazon account is already configured",
+            "reauth_successful": "Re-authentication successful"
+        }
+    }
+} 

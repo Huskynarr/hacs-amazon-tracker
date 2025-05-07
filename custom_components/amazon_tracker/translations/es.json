@@ -1,0 +1,23 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Credenciales de Amazon",
+                "description": "Por favor, introduzca sus credenciales de Amazon",
+                "data": {
+                    "email": "Correo electrónico",
+                    "password": "Contraseña"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Credenciales inválidas. Por favor, verifique su correo electrónico y contraseña.",
+            "cannot_connect": "No se puede conectar a Amazon. Por favor, verifique su conexión a Internet.",
+            "unknown": "Se ha producido un error inesperado. Por favor, inténtelo de nuevo más tarde."
+        },
+        "abort": {
+            "already_configured": "Esta cuenta de Amazon ya está configurada",
+            "reauth_successful": "Re-autenticación exitosa"
+        }
+    }
+} 

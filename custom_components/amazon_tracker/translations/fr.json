@@ -1,0 +1,23 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Identifiants Amazon",
+                "description": "Veuillez saisir vos identifiants Amazon",
+                "data": {
+                    "email": "E-mail",
+                    "password": "Mot de passe"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Identifiants invalides. Veuillez vérifier votre e-mail et votre mot de passe.",
+            "cannot_connect": "Impossible de se connecter à Amazon. Veuillez vérifier votre connexion Internet.",
+            "unknown": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard."
+        },
+        "abort": {
+            "already_configured": "Ce compte Amazon est déjà configuré",
+            "reauth_successful": "Ré-authentification réussie"
+        }
+    }
+} 
