@@ -3,19 +3,11 @@
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
 [![maintainer](https://img.shields.io/badge/maintainer-%40Huskynarr-blue.svg)](https://github.com/Huskynarr)
 
-This custom component allows you to track your Amazon packages directly in Home Assistant. It integrates with your Amazon account to fetch active orders and their delivery status.
+This repository contains both a HACS custom component and a Home Assistant add-on for tracking Amazon packages.
 
-## Features
+## HACS Custom Component
 
-- Track all active Amazon orders
-- Display delivery status and expected delivery dates
-- Show shipping carrier logos
-- Automatic updates of delivery status
-- Easy configuration through Home Assistant UI
-
-## Installation
-
-### Option 1: HACS Installation
+### Installation
 
 1. Install HACS if you haven't already
 2. Add this repository to HACS:
@@ -24,7 +16,17 @@ This custom component allows you to track your Amazon packages directly in Home 
 4. Click Install
 5. Restart Home Assistant
 
-### Option 2: Add-on Installation
+### Configuration
+
+1. Go to Home Assistant Configuration > Integrations
+2. Click the "+ Add Integration" button
+3. Search for "Amazon Package Tracker"
+4. Enter your Amazon credentials
+5. The integration will automatically fetch your active orders
+
+## Home Assistant Add-on
+
+### Installation
 
 1. Add this repository to your Home Assistant instance:
    ```yaml
@@ -36,17 +38,7 @@ This custom component allows you to track your Amazon packages directly in Home 
 3. Configure your Amazon credentials in the add-on configuration
 4. Start the add-on
 
-## Configuration
-
-### HACS Installation
-
-1. Go to Home Assistant Configuration > Integrations
-2. Click the "+ Add Integration" button
-3. Search for "Amazon Package Tracker"
-4. Enter your Amazon credentials
-5. The integration will automatically fetch your active orders
-
-### Add-on Installation
+### Configuration
 
 1. Go to the Add-ons section in Home Assistant
 2. Click on "Amazon Package Tracker"
@@ -61,6 +53,14 @@ After installation, you can add the following to your dashboard:
 ```yaml
 type: custom:amazon-tracker-card
 ```
+
+## Features
+
+- Track all active Amazon orders
+- Display delivery status and expected delivery dates
+- Show shipping carrier logos
+- Automatic updates of delivery status
+- Easy configuration through Home Assistant UI
 
 ## Support
 

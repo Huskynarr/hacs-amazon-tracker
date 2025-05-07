@@ -4,7 +4,7 @@
   "documentation": "https://github.com/Huskynarr/hacs-amazon-tracker",
   "dependencies": [],
   "codeowners": ["@Huskynarr"],
-  "requirements": ["amazon-tracker-api==0.1.0"],
+  "requirements": ["aiohttp>=3.8.0", "voluptuous>=0.13.1"],
   "version": "0.1.0",
   "config_flow": true,
   "iot_class": "cloud_polling"

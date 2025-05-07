@@ -1,0 +1,7 @@
+{
+    "name": "Amazon Package Tracker",
+    "render_readme": true,
+    "domains": ["amazon_tracker"],
+    "homeassistant": "2023.1.0",
+    "iot_class": "Cloud Polling"
+} 
