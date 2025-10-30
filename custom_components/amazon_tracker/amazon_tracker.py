@@ -102,24 +102,66 @@ async def fetch_amazon_packages(email: str, password: str, domain: str = "amazon
                                             carrier_info = tracking_soup.find("div", class_="pt-delivery-card-trackingId")
                                             if carrier_info:
                                                 carrier_text = carrier_info.text.strip()
-                                                carrier = carrier_text.split(" mit ")[1].split("Trackingnummer")[0].strip()
-                                                tracking_number = carrier_text.split("Trackingnummer")[1].strip()
                                                 
-                                                # Extract products
-                                                products = []
-                                                product_links = card.find_all("a", class_="a-link-normal", href=lambda x: x and "/dp/" in x)
-                                                for product in product_links:
-                                                    products.append(product.text.strip())
+                                                # Language-specific parsing patterns
+                                                # Try to extract tracking number using common patterns
+                                                carrier = None
+                                                tracking_number = None
                                                 
-                                                packages.append({
-                                                    "tracking_number": tracking_number,
-                                                    "carrier": carrier,
-                                                    "estimated_delivery": delivery_estimate,
-                                                    "order_date": order_date,
-                                                    "order_number": order_number,
-                                                    "product_name": ", ".join(products),
-                                                    "status": delivery_status,
-                                                })
+                                                # Pattern for German: "mit [carrier] Trackingnummer [number]"
+                                                if " mit " in carrier_text and "Trackingnummer" in carrier_text:
+                                                    try:
+                                                        carrier = carrier_text.split(" mit ")[1].split("Trackingnummer")[0].strip()
+                                                        tracking_number = carrier_text.split("Trackingnummer")[1].strip()
+                                                    except IndexError:
+                                                        pass
+                                                
+                                                # Pattern for English: "with [carrier] Tracking ID [number]" or "by [carrier] Tracking ID [number]"
+                                                elif ("with " in carrier_text or "by " in carrier_text) and "Tracking ID" in carrier_text:
+                                                    try:
+                                                        if "with " in carrier_text:
+                                                            carrier = carrier_text.split("with ")[1].split("Tracking ID")[0].strip()
+                                                        else:
+                                                            carrier = carrier_text.split("by ")[1].split("Tracking ID")[0].strip()
+                                                        tracking_number = carrier_text.split("Tracking ID")[1].strip()
+                                                    except IndexError:
+                                                        pass
+                                                
+                                                # Pattern for French: "avec [carrier] Numéro de suivi [number]"
+                                                elif "avec " in carrier_text and "Numéro de suivi" in carrier_text:
+                                                    try:
+                                                        carrier = carrier_text.split("avec ")[1].split("Numéro de suivi")[0].strip()
+                                                        tracking_number = carrier_text.split("Numéro de suivi")[1].strip()
+                                                    except IndexError:
+                                                        pass
+                                                
+                                                # Fallback: try to extract tracking number with regex
+                                                if not tracking_number:
+                                                    import re
+                                                    # Look for common tracking number patterns
+                                                    tracking_match = re.search(r'[A-Z0-9]{10,}', carrier_text)
+                                                    if tracking_match:
+                                                        tracking_number = tracking_match.group(0)
+                                                        # Carrier is everything before the tracking number
+                                                        carrier = carrier_text.split(tracking_number)[0].strip()
+                                                
+                                                # Only add package if we successfully extracted tracking info
+                                                if tracking_number and carrier:
+                                                    # Extract products
+                                                    products = []
+                                                    product_links = card.find_all("a", class_="a-link-normal", href=lambda x: x and "/dp/" in x)
+                                                    for product in product_links:
+                                                        products.append(product.text.strip())
+                                                    
+                                                    packages.append({
+                                                        "tracking_number": tracking_number,
+                                                        "carrier": carrier,
+                                                        "estimated_delivery": delivery_estimate,
+                                                        "order_date": order_date,
+                                                        "order_number": order_number,
+                                                        "product_name": ", ".join(products),
+                                                        "status": delivery_status,
+                                                    })
                             except Exception as err:
                                 _LOGGER.error("Error parsing order card: %s", err)
                                 continue

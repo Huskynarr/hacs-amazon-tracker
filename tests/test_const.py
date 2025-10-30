@@ -87,8 +87,12 @@ class TestAmazonDomains:
 
     def test_languages_are_valid(self):
         """Test that all languages are valid ISO codes."""
+        # Valid languages include those in AMAZON_DOMAINS plus Spanish (for translation files)
         valid_languages = ["en", "de", "fr", "es"]
         for domain, config in AMAZON_DOMAINS.items():
             assert config["language"] in valid_languages, \
                 f"{domain} has invalid language code: {config['language']}"
+        
+        # Note: Spanish (es) is supported in translation files but not as a domain language yet
+        # This allows for future addition of Spanish Amazon domains (amazon.es, amazon.mx, etc.)
 
