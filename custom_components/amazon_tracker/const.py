@@ -8,6 +8,38 @@ DEFAULT_SCAN_INTERVAL = timedelta(minutes=30)
 CONF_EMAIL = "email"
 CONF_PASSWORD = "password"
 CONF_SCAN_INTERVAL = "scan_interval"
+CONF_DOMAIN = "amazon_domain"
+
+# Amazon Domains
+AMAZON_DOMAINS = {
+    "amazon.com": {
+        "name": "Amazon.com (United States)",
+        "base_url": "https://www.amazon.com",
+        "language": "en",
+    },
+    "amazon.de": {
+        "name": "Amazon.de (Germany)",
+        "base_url": "https://www.amazon.de",
+        "language": "de",
+    },
+    "amazon.fr": {
+        "name": "Amazon.fr (France)",
+        "base_url": "https://www.amazon.fr",
+        "language": "fr",
+    },
+    "amazon.co.uk": {
+        "name": "Amazon.co.uk (United Kingdom)",
+        "base_url": "https://www.amazon.co.uk",
+        "language": "en",
+    },
+    "amazon.ie": {
+        "name": "Amazon.ie (Ireland)",
+        "base_url": "https://www.amazon.ie",
+        "language": "en",
+    },
+}
+
+DEFAULT_DOMAIN = "amazon.de"
 
 # Attributes
 ATTR_TRACKING_NUMBER = "tracking_number"

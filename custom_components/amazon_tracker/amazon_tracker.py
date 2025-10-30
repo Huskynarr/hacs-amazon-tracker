@@ -5,14 +5,23 @@ from typing import Any
 import aiohttp
 from bs4 import BeautifulSoup
 
+from .const import AMAZON_DOMAINS
+
 _LOGGER = logging.getLogger(__name__)
 
-async def fetch_amazon_packages(email: str, password: str) -> list[dict[str, Any]]:
+async def fetch_amazon_packages(email: str, password: str, domain: str = "amazon.de") -> list[dict[str, Any]]:
     """Fetch packages from Amazon."""
+    if domain not in AMAZON_DOMAINS:
+        _LOGGER.error("Unsupported Amazon domain: %s", domain)
+        return []
+    
+    base_url = AMAZON_DOMAINS[domain]["base_url"]
+    
     async with aiohttp.ClientSession() as session:
         try:
             # First, get the login page to get the necessary cookies
-            async with session.get("https://www.amazon.de/ap/signin?openid.pape.max_auth_age=0&openid.return_to=https%3A%2F%2Fwww.amazon.de%2F%3Fref_%3Dnav_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=deflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0") as response:
+            login_url = f"{base_url}/ap/signin?openid.pape.max_auth_age=0&openid.return_to={base_url}%2F%3Fref_%3Dnav_signin&openid.identity=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.assoc_handle=deflex&openid.mode=checkid_setup&openid.claimed_id=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0%2Fidentifier_select&openid.ns=http%3A%2F%2Fspecs.openid.net%2Fauth%2F2.0"
+            async with session.get(login_url) as response:
                 if response.status != 200:
                     _LOGGER.error("Failed to get login page. Status: %s, URL: %s", response.status, response.url)
                     raise Exception(f"Failed to get login page: {response.status}")
@@ -50,7 +59,8 @@ async def fetch_amazon_packages(email: str, password: str) -> list[dict[str, Any
                         raise Exception(f"Login failed: {login_response.status}")
                     
                     # Now get the order history
-                    async with session.get("https://www.amazon.de/gp/css/order-history") as response:
+                    order_history_url = f"{base_url}/gp/css/order-history"
+                    async with session.get(order_history_url) as response:
                         if response.status != 200:
                             _LOGGER.error("Failed to get order history. Status: %s, URL: %s", response.status, response.url)
                             raise Exception(f"Failed to get order history: {response.status}")
@@ -80,7 +90,7 @@ async def fetch_amazon_packages(email: str, password: str) -> list[dict[str, Any
                                 # Extract tracking link
                                 tracking_link = card.find("a", href=lambda x: x and "ship-track" in x)
                                 if tracking_link:
-                                    tracking_url = "https://www.amazon.de" + tracking_link['href']
+                                    tracking_url = base_url + tracking_link['href']
                                     
                                     # Get tracking details
                                     async with session.get(tracking_url) as tracking_response:

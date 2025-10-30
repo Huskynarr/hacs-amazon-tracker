@@ -6,7 +6,8 @@
                 "description": "Veuillez saisir vos identifiants Amazon",
                 "data": {
                     "email": "E-mail",
-                    "password": "Mot de passe"
+                    "password": "Mot de passe",
+                    "amazon_domain": "Domaine Amazon"
                 }
             }
         },

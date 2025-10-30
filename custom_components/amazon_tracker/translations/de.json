@@ -6,7 +6,8 @@
                 "description": "Bitte geben Sie Ihre Amazon-Anmeldedaten ein",
                 "data": {
                     "email": "E-Mail",
-                    "password": "Passwort"
+                    "password": "Passwort",
+                    "amazon_domain": "Amazon-Domain"
                 }
             },
             "amazon_auth": {

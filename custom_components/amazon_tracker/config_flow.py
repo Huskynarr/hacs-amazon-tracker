@@ -13,7 +13,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN
+from .const import DOMAIN, CONF_DOMAIN, AMAZON_DOMAINS, DEFAULT_DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -35,6 +35,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialize the config flow."""
         self._email = None
         self._password = None
+        self._domain = None
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -47,17 +48,19 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 # Store credentials temporarily
                 self._email = user_input["email"]
                 self._password = user_input["password"]
+                self._domain = user_input.get(CONF_DOMAIN, DEFAULT_DOMAIN)
 
                 # Check if this config entry exists
-                await self.async_set_unique_id(self._email)
+                await self.async_set_unique_id(f"{self._email}_{self._domain}")
                 self._abort_if_unique_id_configured()
 
                 # Create the config entry
                 return self.async_create_entry(
-                    title=f"Amazon Package Tracker ({self._email})",
+                    title=f"Amazon Package Tracker ({self._email} - {AMAZON_DOMAINS[self._domain]['name']})",
                     data={
                         "email": self._email,
                         "password": self._password,
+                        CONF_DOMAIN: self._domain,
                     },
                 )
 
@@ -65,12 +68,19 @@ class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 _LOGGER.error("Error during Amazon authentication: %s", err)
                 errors["base"] = "unknown"
 
+        # Create domain selector options
+        domain_options = {
+            domain: config["name"]
+            for domain, config in AMAZON_DOMAINS.items()
+        }
+
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
                     vol.Required("email"): str,
                     vol.Required("password"): str,
+                    vol.Required(CONF_DOMAIN, default=DEFAULT_DOMAIN): vol.In(domain_options),
                 }
             ),
             errors=errors,
