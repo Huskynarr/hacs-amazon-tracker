@@ -16,6 +16,8 @@ from homeassistant.helpers.update_coordinator import (
 
 from .const import (
     DOMAIN,
+    CONF_DOMAIN,
+    DEFAULT_DOMAIN,
     ATTR_TRACKING_NUMBER,
     ATTR_CARRIER,
     ATTR_ESTIMATED_DELIVERY,
@@ -65,10 +67,11 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
         self.entry = entry
         self._email = entry.data.get("email")
         self._password = entry.data.get("password")
+        self._domain = entry.data.get(CONF_DOMAIN, DEFAULT_DOMAIN)
 
     async def _async_update_data(self) -> list[dict[str, Any]]:
         """Fetch data from Amazon."""
-        return await fetch_amazon_packages(self._email, self._password)
+        return await fetch_amazon_packages(self._email, self._password, self._domain)
 
 class AmazonPackageSensor(CoordinatorEntity, SensorEntity):
     """Representation of an Amazon Package Tracker sensor."""

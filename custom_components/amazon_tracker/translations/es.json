@@ -6,7 +6,8 @@
                 "description": "Por favor, introduzca sus credenciales de Amazon",
                 "data": {
                     "email": "Correo electrónico",
-                    "password": "Contraseña"
+                    "password": "Contraseña",
+                    "amazon_domain": "Dominio de Amazon"
                 }
             }
         },
