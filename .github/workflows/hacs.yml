@@ -1,21 +1,22 @@
-name: HACS Release
+name: HACS Validation
 
 on:
   push:
     branches:
       - main
-      - master
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  release:
+  hacs:
+    name: HACS
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+        uses: actions/checkout@v4
 
-      - name: HACS Release
+      - name: HACS Validation
         uses: hacs/action@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+        with:
+          category: integration
