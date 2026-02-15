@@ -2,23 +2,49 @@
     "config": {
         "step": {
             "user": {
-                "title": "Credenciales de Amazon",
-                "description": "Por favor, introduzca sus credenciales de Amazon",
+                "title": "Conexión IMAP",
+                "description": "Introduzca los datos de su servidor IMAP. Amazon envía las notificaciones de pedidos a esta dirección de correo electrónico.",
                 "data": {
-                    "email": "Correo electrónico",
-                    "password": "Contraseña",
-                    "amazon_domain": "Dominio de Amazon"
+                    "imap_server": "Servidor IMAP",
+                    "imap_port": "Puerto IMAP",
+                    "imap_email": "Dirección de correo electrónico",
+                    "imap_password": "Contraseña",
+                    "imap_ssl": "Usar SSL",
+                    "imap_folder": "Carpeta del buzón"
+                }
+            },
+            "amazon": {
+                "title": "Configuración de Amazon",
+                "description": "Configure las regiones de Amazon a monitorear y sus preferencias de seguimiento.",
+                "data": {
+                    "amazon_domains": "Regiones de Amazon",
+                    "tracking_duration": "Rastrear paquetes durante (días)",
+                    "show_delivered": "Mostrar paquetes entregados",
+                    "delivered_duration": "Mostrar entregados durante (días)"
                 }
             }
         },
         "error": {
-            "invalid_auth": "Credenciales inválidas. Por favor, verifique su correo electrónico y contraseña.",
-            "cannot_connect": "No se puede conectar a Amazon. Por favor, verifique su conexión a Internet.",
+            "invalid_auth": "Credenciales IMAP inválidas. Por favor, verifique su correo electrónico y contraseña.",
+            "cannot_connect": "No se puede conectar al servidor IMAP. Por favor, verifique la dirección y el puerto del servidor.",
             "unknown": "Se ha producido un error inesperado. Por favor, inténtelo de nuevo más tarde."
         },
         "abort": {
-            "already_configured": "Esta cuenta de Amazon ya está configurada",
-            "reauth_successful": "Re-autenticación exitosa"
+            "already_configured": "Esta cuenta de correo electrónico ya está configurada"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Configuración de Amazon",
+                "description": "Actualice sus preferencias de seguimiento de Amazon.",
+                "data": {
+                    "amazon_domains": "Regiones de Amazon",
+                    "tracking_duration": "Rastrear paquetes durante (días)",
+                    "show_delivered": "Mostrar paquetes entregados",
+                    "delivered_duration": "Mostrar entregados durante (días)"
+                }
+            }
         }
     }
-} 
+}

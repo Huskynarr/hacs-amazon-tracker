@@ -2,23 +2,49 @@
     "config": {
         "step": {
             "user": {
-                "title": "Identifiants Amazon",
-                "description": "Veuillez saisir vos identifiants Amazon",
+                "title": "Connexion IMAP",
+                "description": "Entrez les informations de votre serveur IMAP. Amazon envoie les notifications de commande à cette adresse e-mail.",
                 "data": {
-                    "email": "E-mail",
-                    "password": "Mot de passe",
-                    "amazon_domain": "Domaine Amazon"
+                    "imap_server": "Serveur IMAP",
+                    "imap_port": "Port IMAP",
+                    "imap_email": "Adresse e-mail",
+                    "imap_password": "Mot de passe",
+                    "imap_ssl": "Utiliser SSL",
+                    "imap_folder": "Dossier de messagerie"
+                }
+            },
+            "amazon": {
+                "title": "Paramètres Amazon",
+                "description": "Configurez les régions Amazon à surveiller et vos préférences de suivi.",
+                "data": {
+                    "amazon_domains": "Régions Amazon",
+                    "tracking_duration": "Suivre les colis pendant (jours)",
+                    "show_delivered": "Afficher les colis livrés",
+                    "delivered_duration": "Afficher les livrés pendant (jours)"
                 }
             }
         },
         "error": {
-            "invalid_auth": "Identifiants invalides. Veuillez vérifier votre e-mail et votre mot de passe.",
-            "cannot_connect": "Impossible de se connecter à Amazon. Veuillez vérifier votre connexion Internet.",
+            "invalid_auth": "Identifiants IMAP invalides. Veuillez vérifier votre e-mail et votre mot de passe.",
+            "cannot_connect": "Impossible de se connecter au serveur IMAP. Veuillez vérifier l'adresse et le port du serveur.",
             "unknown": "Une erreur inattendue s'est produite. Veuillez réessayer plus tard."
         },
         "abort": {
-            "already_configured": "Ce compte Amazon est déjà configuré",
-            "reauth_successful": "Ré-authentification réussie"
+            "already_configured": "Ce compte e-mail est déjà configuré"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Paramètres Amazon",
+                "description": "Mettez à jour vos préférences de suivi Amazon.",
+                "data": {
+                    "amazon_domains": "Régions Amazon",
+                    "tracking_duration": "Suivre les colis pendant (jours)",
+                    "show_delivered": "Afficher les colis livrés",
+                    "delivered_duration": "Afficher les livrés pendant (jours)"
+                }
+            }
         }
     }
-} 
+}

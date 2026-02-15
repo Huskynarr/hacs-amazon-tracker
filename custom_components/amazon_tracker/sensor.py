@@ -2,135 +2,178 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime
 from typing import Any
 
 from homeassistant.components.sensor import SensorEntity
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
-    DataUpdateCoordinator,
-)
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import (
-    DOMAIN,
-    CONF_DOMAIN,
-    DEFAULT_DOMAIN,
-    ATTR_TRACKING_NUMBER,
     ATTR_CARRIER,
     ATTR_ESTIMATED_DELIVERY,
+    ATTR_LAST_UPDATED,
     ATTR_ORDER_DATE,
     ATTR_ORDER_NUMBER,
     ATTR_PRODUCT_NAME,
     ATTR_STATUS,
-    DEFAULT_SCAN_INTERVAL,
+    ATTR_TRACKING_NUMBER,
+    DOMAIN,
+    STATUS_DELIVERED,
 )
-from .amazon_tracker import fetch_amazon_packages
+from .coordinator import AmazonTrackerCoordinator
 
 _LOGGER = logging.getLogger(__name__)
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
     entry: ConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
-    """Set up the Amazon Package Tracker sensor."""
-    try:
-        coordinator = AmazonTrackerCoordinator(hass, entry)
-        await coordinator.async_config_entry_first_refresh()
+    """Set up the Amazon Package Tracker sensors."""
+    coordinator: AmazonTrackerCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-        # Add individual package sensors
-        async_add_entities(
-            AmazonPackageSensor(coordinator, package)
-            for package in coordinator.data
-        )
+    # Track which order numbers already have entities
+    tracked_orders: set[str] = set()
 
-        # Add pending packages sensor
-        async_add_entities([PendingPackagesSensor(coordinator)])
-    except Exception as err:
-        _LOGGER.error("Error setting up Amazon Package Tracker: %s", err)
-        return False
+    # Add pending packages sensor
+    async_add_entities([PendingPackagesSensor(coordinator, entry)])
 
-class AmazonTrackerCoordinator(DataUpdateCoordinator):
-    """My Amazon Package Tracker coordinator."""
+    @callback
+    def _async_add_new_sensors() -> None:
+        """Add sensors for new packages."""
+        if coordinator.data is None:
+            return
 
-    def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
-        """Initialize my coordinator."""
-        super().__init__(
-            hass,
-            _LOGGER,
-            name="Amazon Package Tracker",
-            update_interval=entry.data.get("scan_interval", DEFAULT_SCAN_INTERVAL),
-        )
-        self.entry = entry
-        self._email = entry.data.get("email")
-        self._password = entry.data.get("password")
-        self._domain = entry.data.get(CONF_DOMAIN, DEFAULT_DOMAIN)
+        new_entities = []
+        for order_number in coordinator.data:
+            if order_number not in tracked_orders:
+                tracked_orders.add(order_number)
+                new_entities.append(
+                    AmazonPackageSensor(coordinator, entry, order_number)
+                )
 
-    async def _async_update_data(self) -> list[dict[str, Any]]:
-        """Fetch data from Amazon."""
-        return await fetch_amazon_packages(self._email, self._password, self._domain)
+        if new_entities:
+            async_add_entities(new_entities)
+            _LOGGER.debug("Added %d new package sensors", len(new_entities))
+
+    # Add sensors for existing packages
+    _async_add_new_sensors()
+
+    # Listen for coordinator updates to add new package sensors
+    entry.async_on_unload(
+        coordinator.async_add_listener(_async_add_new_sensors)
+    )
+
 
 class AmazonPackageSensor(CoordinatorEntity, SensorEntity):
-    """Representation of an Amazon Package Tracker sensor."""
+    """Sensor for an individual Amazon package."""
 
     def __init__(
-        self, coordinator: AmazonTrackerCoordinator, package: dict[str, Any]
+        self,
+        coordinator: AmazonTrackerCoordinator,
+        entry: ConfigEntry,
+        order_number: str,
     ) -> None:
         """Initialize the sensor."""
         super().__init__(coordinator)
-        self.package = package
-        self._attr_name = f"Amazon Package {package[ATTR_ORDER_NUMBER]}"
-        self._attr_unique_id = f"{DOMAIN}_{package[ATTR_ORDER_NUMBER]}"
-        self._attr_native_value = package[ATTR_STATUS]
-
-    @property
-    def extra_state_attributes(self) -> dict[str, Any]:
-        """Return the state attributes."""
-        return {
-            ATTR_TRACKING_NUMBER: self.package[ATTR_TRACKING_NUMBER],
-            ATTR_CARRIER: self.package[ATTR_CARRIER],
-            ATTR_ESTIMATED_DELIVERY: self.package[ATTR_ESTIMATED_DELIVERY],
-            ATTR_ORDER_DATE: self.package[ATTR_ORDER_DATE],
-            ATTR_ORDER_NUMBER: self.package[ATTR_ORDER_NUMBER],
-            ATTR_PRODUCT_NAME: self.package[ATTR_PRODUCT_NAME],
-        }
-
-class PendingPackagesSensor(CoordinatorEntity, SensorEntity):
-    """Representation of pending Amazon packages."""
-
-    def __init__(self, coordinator: AmazonTrackerCoordinator) -> None:
-        """Initialize the sensor."""
-        super().__init__(coordinator)
-        self._attr_name = "Amazon Pending Packages"
-        self._attr_unique_id = f"{DOMAIN}_pending_packages"
+        self._order_number = order_number
+        self._attr_name = f"Amazon Package {order_number}"
+        self._attr_unique_id = f"{DOMAIN}_{entry.entry_id}_{order_number}"
         self._attr_icon = "mdi:package-variant"
 
     @property
-    def native_value(self) -> str:
-        """Return the number of pending packages."""
-        pending = len([p for p in self.coordinator.data if p[ATTR_STATUS] != "Delivered"])
-        return str(pending)
+    def _package_data(self) -> dict[str, Any] | None:
+        """Get current package data from coordinator."""
+        if self.coordinator.data is None:
+            return None
+        return self.coordinator.data.get(self._order_number)
+
+    @property
+    def native_value(self) -> str | None:
+        """Return the package status."""
+        pkg = self._package_data
+        return pkg.get(ATTR_STATUS) if pkg else None
+
+    @property
+    def available(self) -> bool:
+        """Return True if entity is available."""
+        return self.coordinator.last_update_success and self._package_data is not None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return the state attributes."""
-        pending_packages = [p for p in self.coordinator.data if p[ATTR_STATUS] != "Delivered"]
-        # Sort by estimated delivery date
-        pending_packages.sort(key=lambda x: x[ATTR_ESTIMATED_DELIVERY])
-        
+        pkg = self._package_data
+        if not pkg:
+            return {}
+
+        return {
+            ATTR_TRACKING_NUMBER: pkg.get(ATTR_TRACKING_NUMBER),
+            ATTR_CARRIER: pkg.get(ATTR_CARRIER),
+            ATTR_ESTIMATED_DELIVERY: pkg.get(ATTR_ESTIMATED_DELIVERY),
+            ATTR_ORDER_DATE: pkg.get(ATTR_ORDER_DATE),
+            ATTR_ORDER_NUMBER: self._order_number,
+            ATTR_PRODUCT_NAME: pkg.get(ATTR_PRODUCT_NAME),
+            ATTR_LAST_UPDATED: pkg.get(ATTR_LAST_UPDATED),
+        }
+
+
+class PendingPackagesSensor(CoordinatorEntity, SensorEntity):
+    """Sensor showing the number of pending (non-delivered) packages."""
+
+    def __init__(
+        self,
+        coordinator: AmazonTrackerCoordinator,
+        entry: ConfigEntry,
+    ) -> None:
+        """Initialize the sensor."""
+        super().__init__(coordinator)
+        self._attr_name = "Amazon Pending Packages"
+        self._attr_unique_id = f"{DOMAIN}_{entry.entry_id}_pending_packages"
+        self._attr_icon = "mdi:package-variant-closed"
+
+    @property
+    def native_value(self) -> int:
+        """Return the number of pending packages."""
+        if self.coordinator.data is None:
+            return 0
+        return len(
+            [
+                p
+                for p in self.coordinator.data.values()
+                if p.get(ATTR_STATUS) != STATUS_DELIVERED
+            ]
+        )
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        """Return the state attributes."""
+        if self.coordinator.data is None:
+            return {"packages": []}
+
+        pending = [
+            p
+            for p in self.coordinator.data.values()
+            if p.get(ATTR_STATUS) != STATUS_DELIVERED
+        ]
+
+        # Sort by estimated delivery date (None last)
+        pending.sort(
+            key=lambda x: x.get(ATTR_ESTIMATED_DELIVERY) or "9999-99-99"
+        )
+
         return {
             "packages": [
                 {
-                    ATTR_PRODUCT_NAME: p[ATTR_PRODUCT_NAME],
-                    ATTR_CARRIER: p[ATTR_CARRIER],
-                    ATTR_STATUS: p[ATTR_STATUS],
-                    ATTR_ESTIMATED_DELIVERY: p[ATTR_ESTIMATED_DELIVERY],
-                    ATTR_TRACKING_NUMBER: p[ATTR_TRACKING_NUMBER],
-                    ATTR_ORDER_NUMBER: p[ATTR_ORDER_NUMBER],
+                    ATTR_PRODUCT_NAME: p.get(ATTR_PRODUCT_NAME),
+                    ATTR_CARRIER: p.get(ATTR_CARRIER),
+                    ATTR_STATUS: p.get(ATTR_STATUS),
+                    ATTR_ESTIMATED_DELIVERY: p.get(ATTR_ESTIMATED_DELIVERY),
+                    ATTR_TRACKING_NUMBER: p.get(ATTR_TRACKING_NUMBER),
+                    ATTR_ORDER_NUMBER: p.get(ATTR_ORDER_NUMBER),
                 }
-                for p in pending_packages
+                for p in pending
             ]
-        } 
+        }

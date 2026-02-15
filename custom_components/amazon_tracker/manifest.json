@@ -4,10 +4,10 @@
   "documentation": "https://github.com/huskynarr/hacs-amazon-tracker",
   "dependencies": [],
   "codeowners": ["@huskynarr"],
-  "requirements": ["beautifulsoup4>=4.12.0", "aiohttp>=3.8.0"],
-  "version": "0.1.0",
+  "requirements": ["aioimaplib>=1.1.0"],
+  "version": "1.0.0",
   "config_flow": true,
-  "iot_class": "cloud_polling",
-  "integration_type": "device",
+  "iot_class": "cloud_push",
+  "integration_type": "service",
   "issue_tracker": "https://github.com/huskynarr/hacs-amazon-tracker/issues"
-} 
+}

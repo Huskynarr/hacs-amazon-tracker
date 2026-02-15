@@ -3,89 +3,221 @@ from __future__ import annotations
 
 import logging
 from typing import Any
+
 import voluptuous as vol
-import aiohttp
-from urllib.parse import urlencode
 
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
+from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.exceptions import HomeAssistantError
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .const import DOMAIN, CONF_DOMAIN, AMAZON_DOMAINS, DEFAULT_DOMAIN
+from .const import (
+    AMAZON_DOMAINS,
+    CONF_AMAZON_DOMAINS,
+    CONF_DELIVERED_DURATION,
+    CONF_IMAP_EMAIL,
+    CONF_IMAP_FOLDER,
+    CONF_IMAP_PASSWORD,
+    CONF_IMAP_PORT,
+    CONF_IMAP_SERVER,
+    CONF_IMAP_SSL,
+    CONF_SHOW_DELIVERED,
+    CONF_TRACKING_DURATION,
+    DEFAULT_DELIVERED_DURATION,
+    DEFAULT_DOMAIN,
+    DEFAULT_IMAP_FOLDER,
+    DEFAULT_IMAP_PORT,
+    DEFAULT_IMAP_SSL,
+    DEFAULT_SHOW_DELIVERED,
+    DEFAULT_TRACKING_DURATION,
+    DOMAIN,
+)
+from .imap_client import ImapClient
 
 _LOGGER = logging.getLogger(__name__)
 
-AMAZON_AUTH_URL = "https://www.amazon.de/ap/signin"
-AMAZON_REDIRECT_URI = "{base_url}/auth/external/callback"
-
-class AmazonAuthError(HomeAssistantError):
-    """Base class for Amazon auth errors."""
-
-class InvalidAuth(AmazonAuthError):
-    """Error to indicate there is invalid auth."""
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Amazon Package Tracker."""
 
-    VERSION = 1
+    VERSION = 2
 
     def __init__(self) -> None:
         """Initialize the config flow."""
-        self._email = None
-        self._password = None
-        self._domain = None
+        self._imap_data: dict[str, Any] = {}
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
-        """Handle the initial step."""
+        """Step 1: IMAP connection settings."""
         errors = {}
 
         if user_input is not None:
+            # Test IMAP connection
             try:
-                # Store credentials temporarily
-                self._email = user_input["email"]
-                self._password = user_input["password"]
-                self._domain = user_input.get(CONF_DOMAIN, DEFAULT_DOMAIN)
-
-                # Check if this config entry exists
-                await self.async_set_unique_id(f"{self._email}_{self._domain}")
-                self._abort_if_unique_id_configured()
-
-                # Create the config entry
-                return self.async_create_entry(
-                    title=f"Amazon Package Tracker ({self._email} - {AMAZON_DOMAINS[self._domain]['name']})",
-                    data={
-                        "email": self._email,
-                        "password": self._password,
-                        CONF_DOMAIN: self._domain,
-                    },
+                success = await ImapClient.test_connection(
+                    server=user_input[CONF_IMAP_SERVER],
+                    port=user_input[CONF_IMAP_PORT],
+                    email_addr=user_input[CONF_IMAP_EMAIL],
+                    password=user_input[CONF_IMAP_PASSWORD],
+                    ssl=user_input.get(CONF_IMAP_SSL, DEFAULT_IMAP_SSL),
+                    folder=user_input.get(CONF_IMAP_FOLDER, DEFAULT_IMAP_FOLDER),
                 )
-
-            except Exception as err:
-                _LOGGER.error("Error during Amazon authentication: %s", err)
+                if success:
+                    self._imap_data = user_input
+                    return await self.async_step_amazon()
+                else:
+                    errors["base"] = "invalid_auth"
+            except ConnectionError:
+                errors["base"] = "cannot_connect"
+            except Exception:
+                _LOGGER.exception("Unexpected error during IMAP connection test")
                 errors["base"] = "unknown"
 
-        # Create domain selector options
+        return self.async_show_form(
+            step_id="user",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_IMAP_SERVER): str,
+                    vol.Required(
+                        CONF_IMAP_PORT, default=DEFAULT_IMAP_PORT
+                    ): int,
+                    vol.Required(CONF_IMAP_EMAIL): str,
+                    vol.Required(CONF_IMAP_PASSWORD): str,
+                    vol.Required(
+                        CONF_IMAP_SSL, default=DEFAULT_IMAP_SSL
+                    ): bool,
+                    vol.Optional(
+                        CONF_IMAP_FOLDER, default=DEFAULT_IMAP_FOLDER
+                    ): str,
+                }
+            ),
+            errors=errors,
+        )
+
+    async def async_step_amazon(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Step 2: Amazon settings."""
+        if user_input is not None:
+            # Set unique ID based on IMAP email
+            await self.async_set_unique_id(self._imap_data[CONF_IMAP_EMAIL])
+            self._abort_if_unique_id_configured()
+
+            # Combine IMAP data with Amazon settings
+            data = {**self._imap_data}
+            options = {
+                CONF_AMAZON_DOMAINS: user_input.get(
+                    CONF_AMAZON_DOMAINS, [DEFAULT_DOMAIN]
+                ),
+                CONF_TRACKING_DURATION: user_input.get(
+                    CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION
+                ),
+                CONF_SHOW_DELIVERED: user_input.get(
+                    CONF_SHOW_DELIVERED, DEFAULT_SHOW_DELIVERED
+                ),
+                CONF_DELIVERED_DURATION: user_input.get(
+                    CONF_DELIVERED_DURATION, DEFAULT_DELIVERED_DURATION
+                ),
+            }
+
+            return self.async_create_entry(
+                title=f"Amazon Tracker ({self._imap_data[CONF_IMAP_EMAIL]})",
+                data=data,
+                options=options,
+            )
+
+        # Build domain options for multi-select
         domain_options = {
             domain: config["name"]
             for domain, config in AMAZON_DOMAINS.items()
         }
 
         return self.async_show_form(
-            step_id="user",
+            step_id="amazon",
             data_schema=vol.Schema(
                 {
-                    vol.Required("email"): str,
-                    vol.Required("password"): str,
-                    vol.Required(CONF_DOMAIN, default=DEFAULT_DOMAIN): vol.In(domain_options),
+                    vol.Required(
+                        CONF_AMAZON_DOMAINS, default=[DEFAULT_DOMAIN]
+                    ): vol.All(
+                        [vol.In(domain_options)],
+                        vol.Length(min=1),
+                    ),
+                    vol.Required(
+                        CONF_TRACKING_DURATION,
+                        default=DEFAULT_TRACKING_DURATION,
+                    ): vol.All(int, vol.Range(min=1, max=90)),
+                    vol.Required(
+                        CONF_SHOW_DELIVERED,
+                        default=DEFAULT_SHOW_DELIVERED,
+                    ): bool,
+                    vol.Required(
+                        CONF_DELIVERED_DURATION,
+                        default=DEFAULT_DELIVERED_DURATION,
+                    ): vol.All(int, vol.Range(min=1, max=30)),
                 }
             ),
-            errors=errors,
         )
 
-    async def async_step_import(self, import_info: dict[str, Any]) -> FlowResult:
-        """Handle import from configuration.yaml."""
-        return await self.async_step_user(import_info) 
+    @staticmethod
+    @callback
+    def async_get_options_flow(
+        config_entry: config_entries.ConfigEntry,
+    ) -> OptionsFlowHandler:
+        """Get the options flow handler."""
+        return OptionsFlowHandler(config_entry)
+
+
+class OptionsFlowHandler(config_entries.OptionsFlow):
+    """Handle options flow for Amazon Package Tracker."""
+
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        """Initialize options flow."""
+        self._config_entry = config_entry
+
+    async def async_step_init(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Handle options flow."""
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        domain_options = {
+            domain: config["name"]
+            for domain, config in AMAZON_DOMAINS.items()
+        }
+
+        current_domains = self._config_entry.options.get(
+            CONF_AMAZON_DOMAINS, [DEFAULT_DOMAIN]
+        )
+        current_tracking = self._config_entry.options.get(
+            CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION
+        )
+        current_show = self._config_entry.options.get(
+            CONF_SHOW_DELIVERED, DEFAULT_SHOW_DELIVERED
+        )
+        current_delivered = self._config_entry.options.get(
+            CONF_DELIVERED_DURATION, DEFAULT_DELIVERED_DURATION
+        )
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_AMAZON_DOMAINS, default=current_domains
+                    ): vol.All(
+                        [vol.In(domain_options)],
+                        vol.Length(min=1),
+                    ),
+                    vol.Required(
+                        CONF_TRACKING_DURATION, default=current_tracking
+                    ): vol.All(int, vol.Range(min=1, max=90)),
+                    vol.Required(
+                        CONF_SHOW_DELIVERED, default=current_show
+                    ): bool,
+                    vol.Required(
+                        CONF_DELIVERED_DURATION, default=current_delivered
+                    ): vol.All(int, vol.Range(min=1, max=30)),
+                }
+            ),
+        )

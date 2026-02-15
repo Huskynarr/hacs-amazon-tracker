@@ -2,30 +2,49 @@
     "config": {
         "step": {
             "user": {
-                "title": "Amazon Anmeldedaten",
-                "description": "Bitte geben Sie Ihre Amazon-Anmeldedaten ein",
+                "title": "IMAP-Verbindung",
+                "description": "Geben Sie die IMAP-Serverdaten Ihres E-Mail-Kontos ein. Amazon sendet Bestellbenachrichtigungen an diese E-Mail-Adresse.",
                 "data": {
-                    "email": "E-Mail",
-                    "password": "Passwort",
-                    "amazon_domain": "Amazon-Domain"
+                    "imap_server": "IMAP-Server",
+                    "imap_port": "IMAP-Port",
+                    "imap_email": "E-Mail-Adresse",
+                    "imap_password": "Passwort",
+                    "imap_ssl": "SSL verwenden",
+                    "imap_folder": "Postfach-Ordner"
                 }
             },
-            "amazon_auth": {
-                "title": "Amazon Anmeldung",
-                "description": "Bitte melden Sie sich bei Amazon an und autorisieren Sie die Anwendung"
+            "amazon": {
+                "title": "Amazon-Einstellungen",
+                "description": "Konfigurieren Sie, welche Amazon-Regionen überwacht werden sollen und Ihre Tracking-Einstellungen.",
+                "data": {
+                    "amazon_domains": "Amazon-Regionen",
+                    "tracking_duration": "Pakete verfolgen für (Tage)",
+                    "show_delivered": "Zugestellte Pakete anzeigen",
+                    "delivered_duration": "Zugestellte anzeigen für (Tage)"
+                }
             }
         },
         "error": {
-            "invalid_auth": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail und Ihr Passwort.",
-            "cannot_connect": "Verbindung zu Amazon nicht möglich. Bitte überprüfen Sie Ihre Internetverbindung.",
-            "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
-            "no_code": "Kein Autorisierungscode erhalten. Bitte versuchen Sie es erneut."
+            "invalid_auth": "Ungültige IMAP-Anmeldedaten. Bitte überprüfen Sie E-Mail und Passwort.",
+            "cannot_connect": "Verbindung zum IMAP-Server nicht möglich. Bitte überprüfen Sie Serveradresse und Port.",
+            "unknown": "Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es später erneut."
         },
         "abort": {
-            "already_configured": "Diese Amazon-Konto ist bereits konfiguriert",
-            "reauth_successful": "Erneute Authentifizierung erfolgreich",
-            "invalid_auth": "Ungültige Anmeldedaten. Bitte überprüfen Sie Ihre E-Mail und Ihr Passwort.",
-            "no_code": "Kein Autorisierungscode erhalten. Bitte versuchen Sie es erneut."
+            "already_configured": "Dieses E-Mail-Konto ist bereits konfiguriert"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Amazon-Einstellungen",
+                "description": "Aktualisieren Sie Ihre Amazon-Tracking-Einstellungen.",
+                "data": {
+                    "amazon_domains": "Amazon-Regionen",
+                    "tracking_duration": "Pakete verfolgen für (Tage)",
+                    "show_delivered": "Zugestellte Pakete anzeigen",
+                    "delivered_duration": "Zugestellte anzeigen für (Tage)"
+                }
+            }
         }
     }
-} 
+}

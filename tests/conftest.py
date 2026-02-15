@@ -13,9 +13,11 @@ sys.modules['homeassistant.helpers.aiohttp_client'] = MagicMock()
 sys.modules['homeassistant.helpers.config_validation'] = MagicMock()
 sys.modules['homeassistant.helpers.update_coordinator'] = MagicMock()
 sys.modules['homeassistant.helpers.entity_platform'] = MagicMock()
+sys.modules['homeassistant.helpers.storage'] = MagicMock()
 sys.modules['homeassistant.components'] = MagicMock()
 sys.modules['homeassistant.components.sensor'] = MagicMock()
 sys.modules['homeassistant.const'] = MagicMock()
+sys.modules['aioimaplib'] = MagicMock()
 
 # Create mock Platform
 sys.modules['homeassistant.const'].Platform = MagicMock()

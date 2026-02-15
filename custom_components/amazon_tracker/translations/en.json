@@ -2,23 +2,49 @@
     "config": {
         "step": {
             "user": {
-                "title": "Amazon Credentials",
-                "description": "Please enter your Amazon credentials",
+                "title": "IMAP Connection",
+                "description": "Enter your IMAP email server details. Amazon sends order notifications to this email address.",
                 "data": {
-                    "email": "Email",
-                    "password": "Password",
-                    "amazon_domain": "Amazon Domain"
+                    "imap_server": "IMAP Server",
+                    "imap_port": "IMAP Port",
+                    "imap_email": "Email Address",
+                    "imap_password": "Password",
+                    "imap_ssl": "Use SSL",
+                    "imap_folder": "Mailbox Folder"
+                }
+            },
+            "amazon": {
+                "title": "Amazon Settings",
+                "description": "Configure which Amazon regions to monitor and tracking preferences.",
+                "data": {
+                    "amazon_domains": "Amazon Regions",
+                    "tracking_duration": "Track packages for (days)",
+                    "show_delivered": "Show delivered packages",
+                    "delivered_duration": "Show delivered for (days)"
                 }
             }
         },
         "error": {
-            "invalid_auth": "Invalid credentials. Please check your email and password.",
-            "cannot_connect": "Unable to connect to Amazon. Please check your internet connection.",
+            "invalid_auth": "Invalid IMAP credentials. Please check your email and password.",
+            "cannot_connect": "Unable to connect to the IMAP server. Please check server address and port.",
             "unknown": "An unexpected error occurred. Please try again later."
         },
         "abort": {
-            "already_configured": "This Amazon account is already configured",
-            "reauth_successful": "Re-authentication successful"
+            "already_configured": "This email account is already configured"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Amazon Settings",
+                "description": "Update your Amazon tracking preferences.",
+                "data": {
+                    "amazon_domains": "Amazon Regions",
+                    "tracking_duration": "Track packages for (days)",
+                    "show_delivered": "Show delivered packages",
+                    "delivered_duration": "Show delivered for (days)"
+                }
+            }
         }
     }
-} 
+}
