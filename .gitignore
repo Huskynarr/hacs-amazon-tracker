@@ -19,6 +19,9 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+.venv/
+venv/
+env/
 
 # Testing
 .pytest_cache/
@@ -38,3 +41,7 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+
+# OpenCode / Codegraph
+.omo/
+.codegraph/
