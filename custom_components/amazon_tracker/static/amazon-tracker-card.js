@@ -209,7 +209,14 @@ class AmazonTrackerCard extends HTMLElement {
 
     connectedCallback() {
         if (this._hass && this._hass.connection) {
-            this._hass.connection.subscribeEvents(() => this.updateContent(), 'state_changed');
+            this._unsub = this._hass.connection.subscribeEvents(() => this.updateContent(), 'state_changed');
+        }
+    }
+
+    disconnectedCallback() {
+        if (this._unsub) {
+            this._unsub();
+            this._unsub = null;
         }
     }
 }
