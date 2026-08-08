@@ -166,9 +166,15 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 Please read our [Code of Conduct](CODE_OF_CONDUCT.md) before participating.
 
-## Sponsor
+## Sponsor this Project
 
-If this integration saves you time, consider [sponsoring on GitHub](https://github.com/sponsors/Huskynarr) or [buying a coffee](https://www.buymeacoffee.com/huskynarr).
+If this integration saves you time, consider supporting its development:
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor%20on%20GitHub-%E2%9D%A4-ff69b4.svg)](https://github.com/sponsors/Huskynarr)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%E2%98%95-yellow.svg)](https://www.buymeacoffee.com/huskynarr)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-%23FF5E5B.svg)](https://ko-fi.com/Huskynarr)
+
+Every contribution helps maintain the project, add new Amazon domains, and keep the integration compatible with the latest Home Assistant releases. Thank you!
 
 ## License
 
