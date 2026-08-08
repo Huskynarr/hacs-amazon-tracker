@@ -1,0 +1,50 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Connessione IMAP",
+                "description": "Inserisci i dettagli del tuo server di posta IMAP. Amazon invia le notifiche degli ordini a questo indirizzo email.",
+                "data": {
+                    "imap_server": "Server IMAP",
+                    "imap_port": "Porta IMAP",
+                    "imap_email": "Indirizzo email",
+                    "imap_password": "Password",
+                    "imap_ssl": "Usa SSL",
+                    "imap_folder": "Cartella della posta"
+                }
+            },
+            "amazon": {
+                "title": "Impostazioni Amazon",
+                "description": "Configura le regioni Amazon da monitorare e le preferenze di tracciamento.",
+                "data": {
+                    "amazon_domains": "Regioni Amazon",
+                    "tracking_duration": "Traccia pacchi per (giorni)",
+                    "show_delivered": "Mostra pacchi consegnati",
+                    "delivered_duration": "Mostra consegnati per (giorni)"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Credenziali IMAP non valide. Controlla email e password.",
+            "cannot_connect": "Impossibile connettersi al server IMAP. Controlla indirizzo e porta del server.",
+            "unknown": "Si è verificato un errore imprevisto. Riprova più tardi."
+        },
+        "abort": {
+            "already_configured": "Questo account email è già configurato"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Impostazioni Amazon",
+                "description": "Aggiorna le tue preferenze di tracciamento Amazon.",
+                "data": {
+                    "amazon_domains": "Regioni Amazon",
+                    "tracking_duration": "Traccia pacchi per (giorni)",
+                    "show_delivered": "Mostra pacchi consegnati",
+                    "delivered_duration": "Mostra consegnati per (giorni)"
+                }
+            }
+        }
+    }
+}

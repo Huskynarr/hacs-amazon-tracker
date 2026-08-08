@@ -79,12 +79,14 @@ EMAIL_SUBJECTS = {
         r"[Ss]hipped",  # English
         r"[Ee]xpédié",  # French
         r"[Ee]nviado",  # Spanish
+        r"[Ss]pedito",  # Italian
     ],
     "out_for_delivery": [
         r"[Zz]ustellung heute",  # German
         r"[Oo]ut for [Dd]elivery",  # English
         r"[Ll]ivraison aujourd'hui",  # French
         r"[Ee]n reparto",  # Spanish
+        r"[Ii]n [Cc]onsegna",  # Italian
     ],
     "delivered": [
         r"[Zz]ugestellt",  # German
@@ -92,6 +94,7 @@ EMAIL_SUBJECTS = {
         r"[Dd]elivered",  # English
         r"[Ll]ivré",  # French
         r"[Ee]ntregado",  # Spanish
+        r"[Cc]onsegnato",  # Italian
     ],
     "ordered": [
         r"[Bb]estätigung",  # German
@@ -99,6 +102,8 @@ EMAIL_SUBJECTS = {
         r"[Cc]onfirmation",  # English/French
         r"[Oo]rder",  # English
         r"[Cc]onfirmación",  # Spanish
+        r"[Cc]onferma",  # Italian
+        r"[Oo]rdine",  # Italian
     ],
 }
 
@@ -161,6 +166,10 @@ CARRIER_PATTERNS = {
     "es": [
         (r"(?:con|por|via)\s+(DHL|DPD|Hermes|UPS|GLS|FedEx|Amazon Logistics|Correos|SEUR)", None),
         (r"(DHL|DPD|Hermes|UPS|GLS|FedEx|Amazon Logistics|Correos|SEUR)\s+[Ss]eguimiento", None),
+    ],
+    "it": [
+        (r"(?:con|da|tramite)\s+(DHL|DPD|Hermes|UPS|GLS|FedEx|Amazon Logistics|Poste Italiane|SDA|BRT)", None),
+        (r"(DHL|DPD|Hermes|UPS|GLS|FedEx|Amazon Logistics|Poste Italiane|SDA|BRT)\s+[Nn]umero", None),
     ],
 }
 

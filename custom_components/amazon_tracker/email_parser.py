@@ -180,6 +180,8 @@ class AmazonEmailParser:
             r"[Aa]rriving\s+\w+,?\s+(\w+)\s+(\d{1,2})",
             # "livraison le lundi 15 janvier"
             r"[Ll]ivraison\s+(?:le\s+)?\w+\s+(\d{1,2})\s+(\w+)",
+            # "consegna lunedì 15 gennaio"
+            r"[Cc]onsegna\s+\w+,?\s+(\d{1,2})\s+(\w+)",
             # Generic date: dd.mm.yyyy
             r"(\d{1,2})\.(\d{1,2})\.(\d{4})",
         ]
@@ -199,7 +201,12 @@ class AmazonEmailParser:
             "mai": 5, "juin": 6, "juillet": 7, "août": 8,
             "septembre": 9, "octobre": 10, "novembre": 11, "décembre": 12,
         }
-        all_months = {**german_months, **english_months, **french_months}
+        italian_months = {
+            "gennaio": 1, "febbraio": 2, "marzo": 3, "aprile": 4,
+            "maggio": 5, "giugno": 6, "luglio": 7, "agosto": 8,
+            "settembre": 9, "ottobre": 10, "novembre": 11, "dicembre": 12,
+        }
+        all_months = {**german_months, **english_months, **french_months, **italian_months}
 
         for pattern in date_patterns:
             match = re.search(pattern, body)

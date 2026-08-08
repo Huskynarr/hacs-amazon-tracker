@@ -163,6 +163,8 @@ class TestCarrierPatterns:
         assert "de" in CARRIER_PATTERNS
         assert "en" in CARRIER_PATTERNS
         assert "fr" in CARRIER_PATTERNS
+        assert "es" in CARRIER_PATTERNS
+        assert "it" in CARRIER_PATTERNS
 
 
 class TestStorageConstants:
