@@ -1,6 +1,8 @@
 """Tests for the Amazon Tracker sensor platform."""
-import pytest
+
 from unittest.mock import MagicMock
+
+import pytest
 
 from custom_components.amazon_tracker.const import (
     ATTR_CARRIER,
@@ -9,10 +11,9 @@ from custom_components.amazon_tracker.const import (
     ATTR_PRODUCT_NAME,
     ATTR_STATUS,
     ATTR_TRACKING_NUMBER,
-    DOMAIN,
     STATUS_DELIVERED,
-    STATUS_SHIPPED,
     STATUS_ORDERED,
+    STATUS_SHIPPED,
 )
 from custom_components.amazon_tracker.sensor import (
     AmazonPackageSensor,

@@ -1,0 +1,26 @@
+target-version = "py312"
+line-length = 120
+
+[lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "SIM",  # flake8-simplify
+    "PIE",  # flake8-pie
+    "PERF", # perflint
+]
+ignore = [
+    "BLE001",   # blind except — intentional for IMAP/email error handling
+    "DTZ005",   # datetime.now() without tz — HA manages timezone context
+    "DTZ011",   # date.today() — HA manages timezone context
+    "S110",     # try-except-pass — intentional for logout cleanup
+    "SIM105",   # contextlib.suppress — try/except/pass is clearer for async cleanup
+    "SIM108",   # ternary operator — if/else is clearer for conditional assignment
+    "E501",     # line too long — handled case by case
+]
+
+[lint.isort]
+force-sort-within-sections = true

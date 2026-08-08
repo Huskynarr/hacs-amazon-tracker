@@ -1,4 +1,5 @@
 """Constants for the Amazon Package Tracker integration."""
+
 from datetime import timedelta
 
 DOMAIN = "amazon_tracker"

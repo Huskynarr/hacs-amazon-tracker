@@ -1,8 +1,8 @@
 """Data update coordinator for Amazon Package Tracker."""
+
 from __future__ import annotations
 
 import logging
-from datetime import timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
@@ -56,9 +56,7 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
 
     def _get_option(self, key: str, default: Any = None) -> Any:
         """Get a config value from options (falling back to data)."""
-        return self._entry.options.get(
-            key, self._entry.data.get(key, default)
-        )
+        return self._entry.options.get(key, self._entry.data.get(key, default))
 
     async def async_initialize(self) -> None:
         """Initialize the coordinator: load storage, connect IMAP, scan emails."""
@@ -88,12 +86,8 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
             await self._imap_client.connect()
 
             # Scan existing emails
-            tracking_duration = self._get_option(
-                CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION
-            )
-            existing = await self._imap_client.fetch_existing_emails(
-                since_days=tracking_duration
-            )
+            tracking_duration = self._get_option(CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION)
+            existing = await self._imap_client.fetch_existing_emails(since_days=tracking_duration)
             if existing:
                 self._store.merge_packages(existing)
                 await self._store.async_save()
@@ -124,12 +118,8 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
             return
 
         try:
-            tracking_duration = self._get_option(
-                CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION
-            )
-            existing = await self._imap_client.fetch_existing_emails(
-                since_days=tracking_duration
-            )
+            tracking_duration = self._get_option(CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION)
+            existing = await self._imap_client.fetch_existing_emails(since_days=tracking_duration)
             if existing:
                 self._store.merge_packages(existing)
                 await self._store.async_save()
@@ -159,15 +149,9 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
 
     def _update_data(self) -> None:
         """Update coordinator data from store."""
-        tracking_duration = self._get_option(
-            CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION
-        )
-        show_delivered = self._get_option(
-            CONF_SHOW_DELIVERED, DEFAULT_SHOW_DELIVERED
-        )
-        delivered_duration = self._get_option(
-            CONF_DELIVERED_DURATION, DEFAULT_DELIVERED_DURATION
-        )
+        tracking_duration = self._get_option(CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION)
+        show_delivered = self._get_option(CONF_SHOW_DELIVERED, DEFAULT_SHOW_DELIVERED)
+        delivered_duration = self._get_option(CONF_DELIVERED_DURATION, DEFAULT_DELIVERED_DURATION)
 
         active = self._store.get_active_packages(
             tracking_duration=tracking_duration,
@@ -182,12 +166,8 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
             # IMAP disconnected, try to reconnect
             try:
                 await self._imap_client.connect()
-                tracking_duration = self._get_option(
-                    CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION
-                )
-                existing = await self._imap_client.fetch_existing_emails(
-                    since_days=tracking_duration
-                )
+                tracking_duration = self._get_option(CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION)
+                existing = await self._imap_client.fetch_existing_emails(since_days=tracking_duration)
                 if existing:
                     self._store.merge_packages(existing)
                     await self._store.async_save()
@@ -198,15 +178,9 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
         # Clean up old packages periodically
         self._store.cleanup_old_packages(max_age_days=60)
 
-        tracking_duration = self._get_option(
-            CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION
-        )
-        show_delivered = self._get_option(
-            CONF_SHOW_DELIVERED, DEFAULT_SHOW_DELIVERED
-        )
-        delivered_duration = self._get_option(
-            CONF_DELIVERED_DURATION, DEFAULT_DELIVERED_DURATION
-        )
+        tracking_duration = self._get_option(CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION)
+        show_delivered = self._get_option(CONF_SHOW_DELIVERED, DEFAULT_SHOW_DELIVERED)
+        delivered_duration = self._get_option(CONF_DELIVERED_DURATION, DEFAULT_DELIVERED_DURATION)
 
         return self._store.get_active_packages(
             tracking_duration=tracking_duration,

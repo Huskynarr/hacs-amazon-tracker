@@ -1,4 +1,5 @@
 """Sensor platform for Amazon Package Tracker."""
+
 from __future__ import annotations
 
 import logging
@@ -62,9 +63,7 @@ async def async_setup_entry(
 
     _async_update_sensors()
 
-    entry.async_on_unload(
-        coordinator.async_add_listener(_async_update_sensors)
-    )
+    entry.async_on_unload(coordinator.async_add_listener(_async_update_sensors))
 
 
 class AmazonPackageSensor(CoordinatorEntity, SensorEntity):
@@ -138,13 +137,7 @@ class PendingPackagesSensor(CoordinatorEntity, SensorEntity):
         """Return the number of pending packages."""
         if self.coordinator.data is None:
             return 0
-        return len(
-            [
-                p
-                for p in self.coordinator.data.values()
-                if p.get(ATTR_STATUS) != STATUS_DELIVERED
-            ]
-        )
+        return len([p for p in self.coordinator.data.values() if p.get(ATTR_STATUS) != STATUS_DELIVERED])
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -152,16 +145,10 @@ class PendingPackagesSensor(CoordinatorEntity, SensorEntity):
         if self.coordinator.data is None:
             return {"packages": []}
 
-        pending = [
-            p
-            for p in self.coordinator.data.values()
-            if p.get(ATTR_STATUS) != STATUS_DELIVERED
-        ]
+        pending = [p for p in self.coordinator.data.values() if p.get(ATTR_STATUS) != STATUS_DELIVERED]
 
         # Sort by estimated delivery date (None last)
-        pending.sort(
-            key=lambda x: x.get(ATTR_ESTIMATED_DELIVERY) or "9999-99-99"
-        )
+        pending.sort(key=lambda x: x.get(ATTR_ESTIMATED_DELIVERY) or "9999-99-99")
 
         return {
             "packages": [

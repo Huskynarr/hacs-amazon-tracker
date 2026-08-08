@@ -1,8 +1,7 @@
 """Tests for Amazon package store."""
-from datetime import datetime, timedelta
-from unittest.mock import AsyncMock, MagicMock, patch
 
-import pytest
+from datetime import datetime, timedelta
+from unittest.mock import MagicMock, patch
 
 from custom_components.amazon_tracker.store import PackageStore
 
@@ -52,7 +51,7 @@ class TestPackageStore:
         pkg1 = _make_package(order_number="111-1111111-1111111", status="shipped")
         pkg2 = _make_package(order_number="111-1111111-1111111", status="shipped")
         self.store.merge_packages([pkg1])
-        changed = self.store.merge_packages([pkg2])
+        self.store.merge_packages([pkg2])
         assert len(self.store.packages) == 1
 
     def test_status_progression_forward(self):
@@ -167,9 +166,7 @@ class TestPackageStore:
         )
         self.store.merge_packages([pkg])
 
-        active = self.store.get_active_packages(
-            show_delivered=True, delivered_duration=3
-        )
+        active = self.store.get_active_packages(show_delivered=True, delivered_duration=3)
         assert len(active) == 0
 
     def test_cleanup_old_packages(self):
@@ -177,10 +174,12 @@ class TestPackageStore:
         old_date = (datetime.now() - timedelta(days=60)).isoformat()
         recent_date = datetime.now().isoformat()
 
-        self.store.merge_packages([
-            _make_package(order_number="111-1111111-1111111", last_updated=old_date),
-            _make_package(order_number="222-2222222-2222222", last_updated=recent_date),
-        ])
+        self.store.merge_packages(
+            [
+                _make_package(order_number="111-1111111-1111111", last_updated=old_date),
+                _make_package(order_number="222-2222222-2222222", last_updated=recent_date),
+            ]
+        )
 
         removed = self.store.cleanup_old_packages(max_age_days=30)
         assert removed == 1
@@ -189,9 +188,6 @@ class TestPackageStore:
 
     def test_multiple_packages(self):
         """Test handling multiple packages."""
-        packages = [
-            _make_package(order_number=f"{i:03d}-{i:07d}-{i:07d}")
-            for i in range(1, 6)
-        ]
+        packages = [_make_package(order_number=f"{i:03d}-{i:07d}-{i:07d}") for i in range(1, 6)]
         self.store.merge_packages(packages)
         assert len(self.store.packages) == 5

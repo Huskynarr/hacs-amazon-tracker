@@ -1,23 +1,22 @@
 """Tests for Amazon tracker constants."""
-import pytest
+
 from custom_components.amazon_tracker.const import (
     AMAZON_DOMAINS,
-    CONF_AMAZON_DOMAINS,
+    CARRIER_PATTERNS,
     CONF_IMAP_EMAIL,
+    CONF_IMAP_FOLDER,
     CONF_IMAP_PASSWORD,
     CONF_IMAP_PORT,
     CONF_IMAP_SERVER,
     CONF_IMAP_SSL,
-    CONF_IMAP_FOLDER,
     DEFAULT_DOMAIN,
     DEFAULT_IMAP_PORT,
     EMAIL_SUBJECTS,
-    STATUS_PRIORITY,
-    TRACKING_PATTERNS,
-    CARRIER_PATTERNS,
     ORDER_NUMBER_PATTERN,
+    STATUS_PRIORITY,
     STORAGE_KEY,
     STORAGE_VERSION,
+    TRACKING_PATTERNS,
 )
 
 
@@ -87,8 +86,7 @@ class TestAmazonDomains:
     def test_senders_match_domains(self):
         """Test that sender addresses match their domains."""
         for domain_key, config in AMAZON_DOMAINS.items():
-            assert config["sender"].endswith(f"@{domain_key}"), \
-                f"Sender for {domain_key} should end with @{domain_key}"
+            assert config["sender"].endswith(f"@{domain_key}"), f"Sender for {domain_key} should end with @{domain_key}"
 
 
 class TestIMAPConstants:
@@ -151,7 +149,20 @@ class TestTrackingPatterns:
 
     def test_common_carriers_present(self):
         """Test that common carriers have tracking patterns."""
-        expected_carriers = ["DHL", "DPD", "Hermes", "UPS", "Amazon Logistics", "Canada Post", "Royal Mail", "USPS", "Colissimo", "Chronopost", "Correos", "SEUR"]
+        expected_carriers = [
+            "DHL",
+            "DPD",
+            "Hermes",
+            "UPS",
+            "Amazon Logistics",
+            "Canada Post",
+            "Royal Mail",
+            "USPS",
+            "Colissimo",
+            "Chronopost",
+            "Correos",
+            "SEUR",
+        ]
         for carrier in expected_carriers:
             assert carrier in TRACKING_PATTERNS, f"Missing patterns for {carrier}"
 
@@ -192,6 +203,7 @@ class TestOrderNumberPattern:
     def test_pattern_matches_amazon_order(self):
         """Test that pattern matches Amazon order numbers."""
         import re
+
         pattern = ORDER_NUMBER_PATTERN
         assert re.search(pattern, "123-4567890-1234567")
         assert re.search(pattern, "Order 123-4567890-1234567 shipped")
@@ -199,6 +211,7 @@ class TestOrderNumberPattern:
     def test_pattern_rejects_invalid(self):
         """Test that pattern rejects non-order strings."""
         import re
+
         pattern = ORDER_NUMBER_PATTERN
         assert not re.search(pattern, "12345")
         assert not re.search(pattern, "abc-defghij-klmnopq")

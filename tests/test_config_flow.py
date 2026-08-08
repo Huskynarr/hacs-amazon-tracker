@@ -1,9 +1,9 @@
 """Tests for config flow."""
-import pytest
 
 from custom_components.amazon_tracker.const import (
     AMAZON_DOMAINS,
     CONF_AMAZON_DOMAINS,
+    CONF_DELIVERED_DURATION,
     CONF_IMAP_EMAIL,
     CONF_IMAP_FOLDER,
     CONF_IMAP_PASSWORD,
@@ -12,14 +12,13 @@ from custom_components.amazon_tracker.const import (
     CONF_IMAP_SSL,
     CONF_SHOW_DELIVERED,
     CONF_TRACKING_DURATION,
-    CONF_DELIVERED_DURATION,
+    DEFAULT_DELIVERED_DURATION,
     DEFAULT_DOMAIN,
     DEFAULT_IMAP_FOLDER,
     DEFAULT_IMAP_PORT,
     DEFAULT_IMAP_SSL,
-    DEFAULT_TRACKING_DURATION,
     DEFAULT_SHOW_DELIVERED,
-    DEFAULT_DELIVERED_DURATION,
+    DEFAULT_TRACKING_DURATION,
     DOMAIN,
 )
 
@@ -62,21 +61,26 @@ class TestConfigFlowConstants:
 
     def test_all_domains_have_names(self):
         """Test all domains have user-friendly names."""
-        for domain, config in AMAZON_DOMAINS.items():
+        for config in AMAZON_DOMAINS.values():
             assert "name" in config
             assert len(config["name"]) > 0
 
     def test_config_flow_module_imports(self):
         """Test that config flow module can be imported."""
         from custom_components.amazon_tracker.config_flow import ConfigFlow
+
         assert ConfigFlow is not None
 
     def test_config_flow_version_2(self):
         """Test config flow version is 2."""
         import os
+
         config_flow_path = os.path.join(
             os.path.dirname(__file__),
-            "..", "custom_components", "amazon_tracker", "config_flow.py",
+            "..",
+            "custom_components",
+            "amazon_tracker",
+            "config_flow.py",
         )
         with open(config_flow_path) as f:
             source = f.read()
@@ -85,4 +89,5 @@ class TestConfigFlowConstants:
     def test_options_flow_handler_exists(self):
         """Test that OptionsFlowHandler exists."""
         from custom_components.amazon_tracker.config_flow import OptionsFlowHandler
+
         assert OptionsFlowHandler is not None

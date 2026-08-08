@@ -1,13 +1,14 @@
 """Email parser for Amazon package notifications."""
+
 from __future__ import annotations
 
+from datetime import date, datetime
 import email
+from email.message import EmailMessage
 import email.policy
+from html.parser import HTMLParser
 import logging
 import re
-from datetime import datetime, date
-from email.message import EmailMessage
-from html.parser import HTMLParser
 from typing import Any
 
 from .const import (
@@ -16,7 +17,6 @@ from .const import (
     EMAIL_SUBJECTS,
     ORDER_NUMBER_PATTERN,
     STATUS_ORDERED,
-    STATUS_PRIORITY,
     TRACKING_PATTERNS,
 )
 
@@ -34,9 +34,7 @@ class _HTMLTextExtractor(HTMLParser):
     def handle_starttag(self, tag, attrs):
         if tag in ("script", "style"):
             self._skip = True
-        elif tag == "br":
-            self._text_parts.append("\n")
-        elif tag in ("p", "div", "tr", "li"):
+        elif tag == "br" or tag in ("p", "div", "tr", "li"):
             self._text_parts.append("\n")
 
     def handle_endtag(self, tag):
@@ -187,24 +185,60 @@ class AmazonEmailParser:
         ]
 
         german_months = {
-            "januar": 1, "februar": 2, "märz": 3, "april": 4,
-            "mai": 5, "juni": 6, "juli": 7, "august": 8,
-            "september": 9, "oktober": 10, "november": 11, "dezember": 12,
+            "januar": 1,
+            "februar": 2,
+            "märz": 3,
+            "april": 4,
+            "mai": 5,
+            "juni": 6,
+            "juli": 7,
+            "august": 8,
+            "september": 9,
+            "oktober": 10,
+            "november": 11,
+            "dezember": 12,
         }
         english_months = {
-            "january": 1, "february": 2, "march": 3, "april": 4,
-            "may": 5, "june": 6, "july": 7, "august": 8,
-            "september": 9, "october": 10, "november": 11, "december": 12,
+            "january": 1,
+            "february": 2,
+            "march": 3,
+            "april": 4,
+            "may": 5,
+            "june": 6,
+            "july": 7,
+            "august": 8,
+            "september": 9,
+            "october": 10,
+            "november": 11,
+            "december": 12,
         }
         french_months = {
-            "janvier": 1, "février": 2, "mars": 3, "avril": 4,
-            "mai": 5, "juin": 6, "juillet": 7, "août": 8,
-            "septembre": 9, "octobre": 10, "novembre": 11, "décembre": 12,
+            "janvier": 1,
+            "février": 2,
+            "mars": 3,
+            "avril": 4,
+            "mai": 5,
+            "juin": 6,
+            "juillet": 7,
+            "août": 8,
+            "septembre": 9,
+            "octobre": 10,
+            "novembre": 11,
+            "décembre": 12,
         }
         italian_months = {
-            "gennaio": 1, "febbraio": 2, "marzo": 3, "aprile": 4,
-            "maggio": 5, "giugno": 6, "luglio": 7, "agosto": 8,
-            "settembre": 9, "ottobre": 10, "novembre": 11, "dicembre": 12,
+            "gennaio": 1,
+            "febbraio": 2,
+            "marzo": 3,
+            "aprile": 4,
+            "maggio": 5,
+            "giugno": 6,
+            "luglio": 7,
+            "agosto": 8,
+            "settembre": 9,
+            "ottobre": 10,
+            "novembre": 11,
+            "dicembre": 12,
         }
         all_months = {**german_months, **english_months, **french_months, **italian_months}
 
@@ -328,14 +362,20 @@ def build_imap_search_query(domains: list[str], since_date: date) -> str:
             senders.append(domain_config["sender"])
 
     english_months = [
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
     ]
-    since_str = (
-        f"{since_date.day:02d}-"
-        f"{english_months[since_date.month - 1]}-"
-        f"{since_date.year}"
-    )
+    since_str = f"{since_date.day:02d}-{english_months[since_date.month - 1]}-{since_date.year}"
 
     if not senders:
         return f"(SINCE {since_str})"

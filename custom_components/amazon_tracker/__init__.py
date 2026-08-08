@@ -1,11 +1,12 @@
 """The Amazon Package Tracker integration."""
+
 from __future__ import annotations
 
 import logging
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, ServiceCall, callback
 from homeassistant.const import Platform
+from homeassistant.core import HomeAssistant, ServiceCall, callback
 
 from .const import DOMAIN
 from .coordinator import AmazonTrackerCoordinator
@@ -82,9 +83,7 @@ def _unregister_services(hass: HomeAssistant) -> None:
         hass.services.async_remove(DOMAIN, "remove_package")
 
 
-def _get_coordinators(
-    hass: HomeAssistant, entry_id: str | None
-) -> list[AmazonTrackerCoordinator]:
+def _get_coordinators(hass: HomeAssistant, entry_id: str | None) -> list[AmazonTrackerCoordinator]:
     """Get coordinator(s) by entry_id, or all if not specified."""
     domain_data: dict = hass.data.get(DOMAIN, {})
     if entry_id:

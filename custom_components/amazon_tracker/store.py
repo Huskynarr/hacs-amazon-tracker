@@ -1,17 +1,18 @@
 """Persistent storage for Amazon package data."""
+
 from __future__ import annotations
 
-import logging
 from datetime import datetime, timedelta
+import logging
 from typing import Any
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.storage import Store
 
 from .const import (
+    STATUS_PRIORITY,
     STORAGE_KEY,
     STORAGE_VERSION,
-    STATUS_PRIORITY,
 )
 
 _LOGGER = logging.getLogger(__name__)

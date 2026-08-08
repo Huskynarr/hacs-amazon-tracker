@@ -1,10 +1,12 @@
 """IMAP client for receiving Amazon notification emails."""
+
 from __future__ import annotations
 
 import asyncio
-import logging
+from collections.abc import Callable
 from datetime import date, timedelta
-from typing import Any, Callable
+import logging
+from typing import Any
 
 import aioimaplib
 
@@ -123,9 +125,7 @@ class ImapClient:
                     if not self._client:
                         continue
 
-                idle_response = await self._client.idle_start(
-                    timeout=IDLE_TIMEOUT
-                )
+                await self._client.idle_start(timeout=IDLE_TIMEOUT)
 
                 # Wait for IDLE to complete (new mail or timeout)
                 msg = await self._client.wait_server_push()
@@ -174,9 +174,7 @@ class ImapClient:
             packages = []
             for msg_id in recent_ids:
                 msg_id_str = msg_id if isinstance(msg_id, str) else msg_id.decode()
-                fetch_response = await self._client.fetch(
-                    msg_id_str, "(RFC822)"
-                )
+                fetch_response = await self._client.fetch(msg_id_str, "(RFC822)")
                 if fetch_response.result == "OK":
                     for line in fetch_response.lines:
                         if isinstance(line, bytes) and len(line) > 100:
@@ -210,9 +208,7 @@ class ImapClient:
             packages = []
             for msg_id in message_ids:
                 msg_id_str = msg_id if isinstance(msg_id, str) else msg_id.decode()
-                fetch_response = await self._client.fetch(
-                    msg_id_str, "(RFC822)"
-                )
+                fetch_response = await self._client.fetch(msg_id_str, "(RFC822)")
                 if fetch_response.result == "OK":
                     for line in fetch_response.lines:
                         if isinstance(line, bytes) and len(line) > 100:
@@ -232,9 +228,7 @@ class ImapClient:
         if not self._running:
             return
 
-        _LOGGER.info(
-            "Reconnecting to IMAP in %d seconds...", self._backoff
-        )
+        _LOGGER.info("Reconnecting to IMAP in %d seconds...", self._backoff)
         await asyncio.sleep(self._backoff)
 
         try:

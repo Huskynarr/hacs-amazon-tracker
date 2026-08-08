@@ -1,10 +1,9 @@
 """Tests for Amazon email parser."""
-import email
-import email.mime.text
-import email.mime.multipart
-from datetime import date
 
-import pytest
+from datetime import date
+import email
+import email.mime.multipart
+import email.mime.text
 
 from custom_components.amazon_tracker.email_parser import (
     AmazonEmailParser,
@@ -290,9 +289,7 @@ class TestBuildImapSearchQuery:
 
     def test_multiple_domains(self):
         """Test query with multiple domains."""
-        query = build_imap_search_query(
-            ["amazon.de", "amazon.com"], date(2025, 1, 1)
-        )
+        query = build_imap_search_query(["amazon.de", "amazon.com"], date(2025, 1, 1))
         assert "order-update@amazon.de" in query
         assert "order-update@amazon.com" in query
         assert "OR" in query

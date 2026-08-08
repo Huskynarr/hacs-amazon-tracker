@@ -1,17 +1,16 @@
 """Tests for the Amazon Tracker Coordinator."""
-import pytest
-from unittest.mock import MagicMock, AsyncMock, patch
 
-from custom_components.amazon_tracker.coordinator import AmazonTrackerCoordinator
+from unittest.mock import MagicMock
+
+import pytest
+
 from custom_components.amazon_tracker.const import (
     CONF_AMAZON_DOMAINS,
-    CONF_TRACKING_DURATION,
-    CONF_SHOW_DELIVERED,
     CONF_DELIVERED_DURATION,
-    DEFAULT_TRACKING_DURATION,
-    DEFAULT_SHOW_DELIVERED,
-    DEFAULT_DELIVERED_DURATION,
+    CONF_SHOW_DELIVERED,
+    CONF_TRACKING_DURATION,
 )
+from custom_components.amazon_tracker.coordinator import AmazonTrackerCoordinator
 
 
 @pytest.fixture
@@ -60,9 +59,7 @@ class TestRemovePackage:
     """Test remove_package service method."""
 
     def test_remove_existing_package(self, coordinator):
-        coordinator._store._packages = {
-            "123-4567890-1234567": {"status": "ordered"}
-        }
+        coordinator._store._packages = {"123-4567890-1234567": {"status": "ordered"}}
         coordinator.hass = MagicMock()
         coordinator.remove_package("123-4567890-1234567")
         assert "123-4567890-1234567" not in coordinator.store.packages
