@@ -33,7 +33,7 @@ jobs:
           cache: pip
 
       - name: Install ruff
-        run: pip install ruff
+        run: pip install "ruff>=0.16"
 
       - name: Run ruff check
         run: ruff check custom_components/ tests/
@@ -60,7 +60,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install aioimaplib voluptuous pytest pytest-asyncio
+          pip install -e ".[test]"
 
       - name: Run tests
         run: python -m pytest tests/ -v
