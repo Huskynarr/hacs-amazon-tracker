@@ -63,6 +63,11 @@ AMAZON_DOMAINS = {
         "sender": "order-update@amazon.it",
         "language": "it",
     },
+    "amazon.ca": {
+        "name": "Amazon.ca (Canada)",
+        "sender": "order-update@amazon.ca",
+        "language": "en",
+    },
 }
 
 DEFAULT_DOMAIN = "amazon.de"
@@ -134,6 +139,9 @@ TRACKING_PATTERNS = {
     "Deutsche Post": [
         r"\b(R[A-Z]{1}\d{9}DE)\b",  # Deutsche Post Einschreiben
     ],
+    "Canada Post": [
+        r"\b(\d{16})\b",  # Canada Post standard
+    ],
 }
 
 # Carrier detection patterns in email body
@@ -143,8 +151,8 @@ CARRIER_PATTERNS = {
         (r"(DHL|DPD|Hermes|UPS|GLS|FedEx|Deutsche Post|Amazon Logistics)\s+Trackingnummer", None),
     ],
     "en": [
-        (r"(?:with|by|via)\s+(DHL|DPD|Hermes|UPS|GLS|FedEx|Amazon Logistics|Royal Mail|USPS)", None),
-        (r"(DHL|DPD|Hermes|UPS|GLS|FedEx|Amazon Logistics|Royal Mail|USPS)\s+[Tt]racking", None),
+        (r"(?:with|by|via)\s+(DHL|DPD|Hermes|UPS|GLS|FedEx|Amazon Logistics|Royal Mail|USPS|Canada Post)", None),
+        (r"(DHL|DPD|Hermes|UPS|GLS|FedEx|Amazon Logistics|Royal Mail|USPS|Canada Post)\s+[Tt]racking", None),
     ],
     "fr": [
         (r"(?:avec|par|via)\s+(DHL|DPD|Hermes|UPS|GLS|FedEx|Amazon Logistics|Colissimo|Chronopost)", None),

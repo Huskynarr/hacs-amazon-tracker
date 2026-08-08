@@ -35,6 +35,9 @@ class TestAmazonDomains:
             "amazon.fr",
             "amazon.co.uk",
             "amazon.ie",
+            "amazon.es",
+            "amazon.it",
+            "amazon.ca",
         ]
         for domain in expected_domains:
             assert domain in AMAZON_DOMAINS
@@ -60,6 +63,13 @@ class TestAmazonDomains:
         config = AMAZON_DOMAINS["amazon.com"]
         assert config["name"] == "Amazon.com (United States)"
         assert config["sender"] == "order-update@amazon.com"
+        assert config["language"] == "en"
+
+    def test_amazon_ca_configuration(self):
+        """Test Amazon.ca configuration."""
+        config = AMAZON_DOMAINS["amazon.ca"]
+        assert config["name"] == "Amazon.ca (Canada)"
+        assert config["sender"] == "order-update@amazon.ca"
         assert config["language"] == "en"
 
     def test_default_domain(self):
@@ -134,7 +144,7 @@ class TestTrackingPatterns:
 
     def test_common_carriers_present(self):
         """Test that common carriers have tracking patterns."""
-        expected_carriers = ["DHL", "DPD", "Hermes", "UPS", "Amazon Logistics"]
+        expected_carriers = ["DHL", "DPD", "Hermes", "UPS", "Amazon Logistics", "Canada Post"]
         for carrier in expected_carriers:
             assert carrier in TRACKING_PATTERNS, f"Missing patterns for {carrier}"
 
