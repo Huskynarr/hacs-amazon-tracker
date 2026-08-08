@@ -51,6 +51,11 @@ class ImapClient:
         self._running = False
         self._backoff = INITIAL_BACKOFF
 
+    @property
+    def is_connected(self) -> bool:
+        """Return True if the IMAP client has an active connection."""
+        return self._client is not None
+
     async def connect(self) -> None:
         """Connect to the IMAP server."""
         try:

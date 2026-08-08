@@ -147,7 +147,7 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self) -> dict[str, Any]:
         """Fallback polling update (in case IDLE fails)."""
-        if self._imap_client and self._imap_client._client is None:
+        if self._imap_client and not self._imap_client.is_connected:
             # IMAP disconnected, try to reconnect
             try:
                 await self._imap_client.connect()
