@@ -194,7 +194,7 @@ class PendingPackagesCard extends HTMLElement {
 
             return `
                 <div class="package">
-                    <img class="carrier-logo" src="/local/carrier-logos/${carrierLower}.png"
+                    <img class="carrier-logo" src="/api/file-serving/carrier-logos/${carrierLower}.svg"
                          onerror="this.src='/local/carrier-logos/default.png'">
                     <div class="package-info">
                         <div class="package-name">
