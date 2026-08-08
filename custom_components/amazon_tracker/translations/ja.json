@@ -1,0 +1,50 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "IMAP接続",
+                "description": "IMAPメールサーバーの詳細を入力してください。Amazonはこのメールアドレスに注文通知を送信します。",
+                "data": {
+                    "imap_server": "IMAPサーバー",
+                    "imap_port": "IMAPポート",
+                    "imap_email": "メールアドレス",
+                    "imap_password": "パスワード",
+                    "imap_ssl": "SSLを使用",
+                    "imap_folder": "メールボックスフォルダ"
+                }
+            },
+            "amazon": {
+                "title": "Amazon設定",
+                "description": "監視するAmazonリージョンと追跡設定を構成します。",
+                "data": {
+                    "amazon_domains": "Amazonリージョン",
+                    "tracking_duration": "荷物を追跡する期間（日）",
+                    "show_delivered": "配達完了の荷物を表示",
+                    "delivered_duration": "配達完了を表示する期間（日）"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "IMAP認証情報が無効です。メールとパスワードを確認してください。",
+            "cannot_connect": "IMAPサーバーに接続できません。サーバーアドレスとポートを確認してください。",
+            "unknown": "予期しないエラーが発生しました。後でもう一度お試しください。"
+        },
+        "abort": {
+            "already_configured": "このメールアカウントはすでに設定されています"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Amazon設定",
+                "description": "Amazonの追跡設定を更新します。",
+                "data": {
+                    "amazon_domains": "Amazonリージョン",
+                    "tracking_duration": "荷物を追跡する期間（日）",
+                    "show_delivered": "配達完了の荷物を表示",
+                    "delivered_duration": "配達完了を表示する期間（日）"
+                }
+            }
+        }
+    }
+}

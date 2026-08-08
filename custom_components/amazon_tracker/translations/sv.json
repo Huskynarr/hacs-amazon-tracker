@@ -1,0 +1,50 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "IMAP-anslutning",
+                "description": "Ange dina IMAP-e-postserveruppgifter. Amazon skickar beställningsmeddelanden till denna e-postadress.",
+                "data": {
+                    "imap_server": "IMAP-server",
+                    "imap_port": "IMAP-port",
+                    "imap_email": "E-postadress",
+                    "imap_password": "Lösenord",
+                    "imap_ssl": "Använd SSL",
+                    "imap_folder": "Brevlådemapp"
+                }
+            },
+            "amazon": {
+                "title": "Amazon-inställningar",
+                "description": "Konfigurera vilka Amazon-regioner som ska övervakas och dina spårningsinställningar.",
+                "data": {
+                    "amazon_domains": "Amazon-regioner",
+                    "tracking_duration": "Spåra paket i (dagar)",
+                    "show_delivered": "Visa levererade paket",
+                    "delivered_duration": "Visa levererade i (dagar)"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Ogiltiga IMAP-inloggningsuppgifter. Kontrollera din e-post och ditt lösenord.",
+            "cannot_connect": "Det gick inte att ansluta till IMAP-servern. Kontrollera serveradress och port.",
+            "unknown": "Ett oväntat fel inträffade. Försök igen senare."
+        },
+        "abort": {
+            "already_configured": "Detta e-postkonto är redan konfigurerat"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Amazon-inställningar",
+                "description": "Uppdatera dina Amazon-spårningsinställningar.",
+                "data": {
+                    "amazon_domains": "Amazon-regioner",
+                    "tracking_duration": "Spåra paket i (dagar)",
+                    "show_delivered": "Visa levererade paket",
+                    "delivered_duration": "Visa levererade i (dagar)"
+                }
+            }
+        }
+    }
+}

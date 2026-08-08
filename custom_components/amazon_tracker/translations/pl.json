@@ -1,0 +1,50 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Połączenie IMAP",
+                "description": "Wprowadź dane swojego serwera poczty IMAP. Amazon wysyła powiadomienia o zamówieniach na ten adres e-mail.",
+                "data": {
+                    "imap_server": "Serwer IMAP",
+                    "imap_port": "Port IMAP",
+                    "imap_email": "Adres e-mail",
+                    "imap_password": "Hasło",
+                    "imap_ssl": "Użyj SSL",
+                    "imap_folder": "Folder skrzynki pocztowej"
+                }
+            },
+            "amazon": {
+                "title": "Ustawienia Amazon",
+                "description": "Skonfiguruj regiony Amazon do monitorowania i preferencje śledzenia.",
+                "data": {
+                    "amazon_domains": "Regiony Amazon",
+                    "tracking_duration": "Śledź paczki przez (dni)",
+                    "show_delivered": "Pokaż dostarczone paczki",
+                    "delivered_duration": "Pokaż dostarczone przez (dni)"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Nieprawidłowe dane logowania IMAP. Sprawdź swój e-mail i hasło.",
+            "cannot_connect": "Nie można połączyć się z serwerem IMAP. Sprawdź adres serwera i port.",
+            "unknown": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie później."
+        },
+        "abort": {
+            "already_configured": "To konto e-mail jest już skonfigurowane"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Ustawienia Amazon",
+                "description": "Zaktualizuj swoje preferencje śledzenia Amazon.",
+                "data": {
+                    "amazon_domains": "Regiony Amazon",
+                    "tracking_duration": "Śledź paczki przez (dni)",
+                    "show_delivered": "Pokaż dostarczone paczki",
+                    "delivered_duration": "Pokaż dostarczone przez (dni)"
+                }
+            }
+        }
+    }
+}

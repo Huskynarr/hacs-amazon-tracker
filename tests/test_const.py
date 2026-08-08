@@ -27,7 +27,7 @@ class TestAmazonDomains:
     def test_amazon_domains_structure(self):
         """Test that AMAZON_DOMAINS has the correct structure."""
         assert isinstance(AMAZON_DOMAINS, dict)
-        assert len(AMAZON_DOMAINS) >= 5
+        assert len(AMAZON_DOMAINS) >= 15
 
         expected_domains = [
             "amazon.com",
@@ -38,6 +38,13 @@ class TestAmazonDomains:
             "amazon.es",
             "amazon.it",
             "amazon.ca",
+            "amazon.com.au",
+            "amazon.nl",
+            "amazon.pl",
+            "amazon.se",
+            "amazon.com.mx",
+            "amazon.in",
+            "amazon.co.jp",
         ]
         for domain in expected_domains:
             assert domain in AMAZON_DOMAINS

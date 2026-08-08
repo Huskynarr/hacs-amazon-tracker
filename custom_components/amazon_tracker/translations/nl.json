@@ -1,0 +1,50 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "IMAP-verbinding",
+                "description": "Voer de gegevens van uw IMAP-e-mailserver in. Amazon stuurt bestelmeldingen naar dit e-mailadres.",
+                "data": {
+                    "imap_server": "IMAP-server",
+                    "imap_port": "IMAP-poort",
+                    "imap_email": "E-mailadres",
+                    "imap_password": "Wachtwoord",
+                    "imap_ssl": "SSL gebruiken",
+                    "imap_folder": "Postvakmap"
+                }
+            },
+            "amazon": {
+                "title": "Amazon-instellingen",
+                "description": "Configureer welke Amazon-regio's u wilt monitoren en uw trackingvoorkeuren.",
+                "data": {
+                    "amazon_domains": "Amazon-regio's",
+                    "tracking_duration": "Pakketten volgen voor (dagen)",
+                    "show_delivered": "Geleverde pakketten tonen",
+                    "delivered_duration": "Geleverde tonen voor (dagen)"
+                }
+            }
+        },
+        "error": {
+            "invalid_auth": "Ongeldige IMAP-inloggegevens. Controleer uw e-mail en wachtwoord.",
+            "cannot_connect": "Kan geen verbinding maken met de IMAP-server. Controleer het serveradres en de poort.",
+            "unknown": "Er is een onverwachte fout opgetreden. Probeer het later opnieuw."
+        },
+        "abort": {
+            "already_configured": "Dit e-mailaccount is al geconfigureerd"
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Amazon-instellingen",
+                "description": "Werk uw Amazon-trackingvoorkeuren bij.",
+                "data": {
+                    "amazon_domains": "Amazon-regio's",
+                    "tracking_duration": "Pakketten volgen voor (dagen)",
+                    "show_delivered": "Geleverde pakketten tonen",
+                    "delivered_duration": "Geleverde tonen voor (dagen)"
+                }
+            }
+        }
+    }
+}

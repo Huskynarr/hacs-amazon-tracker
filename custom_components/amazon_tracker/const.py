@@ -68,6 +68,41 @@ AMAZON_DOMAINS = {
         "sender": "order-update@amazon.ca",
         "language": "en",
     },
+    "amazon.com.au": {
+        "name": "Amazon.com.au (Australia)",
+        "sender": "order-update@amazon.com.au",
+        "language": "en",
+    },
+    "amazon.nl": {
+        "name": "Amazon.nl (Netherlands)",
+        "sender": "order-update@amazon.nl",
+        "language": "nl",
+    },
+    "amazon.pl": {
+        "name": "Amazon.pl (Poland)",
+        "sender": "order-update@amazon.pl",
+        "language": "pl",
+    },
+    "amazon.se": {
+        "name": "Amazon.se (Sweden)",
+        "sender": "order-update@amazon.se",
+        "language": "sv",
+    },
+    "amazon.com.mx": {
+        "name": "Amazon.com.mx (Mexico)",
+        "sender": "order-update@amazon.com.mx",
+        "language": "es",
+    },
+    "amazon.in": {
+        "name": "Amazon.in (India)",
+        "sender": "order-update@amazon.in",
+        "language": "en",
+    },
+    "amazon.co.jp": {
+        "name": "Amazon.co.jp (Japan)",
+        "sender": "order-update@amazon.co.jp",
+        "language": "ja",
+    },
 }
 
 DEFAULT_DOMAIN = "amazon.de"
