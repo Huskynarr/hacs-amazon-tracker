@@ -117,6 +117,37 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
         await self._store.async_save()
         _LOGGER.debug("Coordinator shut down")
 
+    async def async_scan_now(self) -> None:
+        """Manually trigger an IMAP email scan and update data."""
+        if not self._imap_client or not self._imap_client.is_connected:
+            _LOGGER.warning("Cannot scan: IMAP client not connected")
+            return
+
+        try:
+            tracking_duration = self._get_option(
+                CONF_TRACKING_DURATION, DEFAULT_TRACKING_DURATION
+            )
+            existing = await self._imap_client.fetch_existing_emails(
+                since_days=tracking_duration
+            )
+            if existing:
+                self._store.merge_packages(existing)
+                await self._store.async_save()
+            self._update_data()
+            _LOGGER.info("Manual scan complete, found %d packages", len(existing))
+        except Exception as err:
+            _LOGGER.error("Error during manual scan: %s", err)
+
+    def remove_package(self, order_number: str) -> None:
+        """Remove a package from the store by order number."""
+        if order_number in self._store.packages:
+            del self._store.packages[order_number]
+            self.hass.async_create_task(self._store.async_save())
+            self._update_data()
+            _LOGGER.info("Removed package %s from store", order_number)
+        else:
+            _LOGGER.warning("Cannot remove: order %s not found in store", order_number)
+
     def _handle_new_packages(self, packages: list[dict[str, Any]]) -> None:
         """Handle new packages from IMAP callback."""
         changed = self._store.merge_packages(packages)
