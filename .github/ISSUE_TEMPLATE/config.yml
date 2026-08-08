@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerability
+    url: https://github.com/Huskynarr/hacs-amazon-tracker/security
+    about: Report security vulnerabilities privately via GitHub's security tab. Do NOT open a public issue.
+  - name: Home Assistant Community Forum
+    url: https://community.home-assistant.io/
+    about: Ask questions and discuss with the Home Assistant community.
