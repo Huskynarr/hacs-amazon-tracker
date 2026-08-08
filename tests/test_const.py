@@ -144,7 +144,7 @@ class TestTrackingPatterns:
 
     def test_common_carriers_present(self):
         """Test that common carriers have tracking patterns."""
-        expected_carriers = ["DHL", "DPD", "Hermes", "UPS", "Amazon Logistics", "Canada Post"]
+        expected_carriers = ["DHL", "DPD", "Hermes", "UPS", "Amazon Logistics", "Canada Post", "Royal Mail", "USPS", "Colissimo", "Chronopost", "Correos", "SEUR"]
         for carrier in expected_carriers:
             assert carrier in TRACKING_PATTERNS, f"Missing patterns for {carrier}"
 

@@ -147,6 +147,39 @@ TRACKING_PATTERNS = {
     "Canada Post": [
         r"\b(\d{16})\b",  # Canada Post standard
     ],
+    "Royal Mail": [
+        r"\b([A-Z]{2}\d{9}GB)\b",  # Royal Mail tracked
+        r"\b(RM\d{9}GB)\b",  # Royal Mail special delivery
+    ],
+    "USPS": [
+        r"\b(\d{20,22})\b",  # USPS tracking
+        r"\b(9[0-9]{20,22})\b",  # USPS priority
+    ],
+    "Colissimo": [
+        r"\b([A-Z]{2}\d{9}FR)\b",  # Colissimo international
+        r"\b(8R\d{11,13})\b",  # Colissimo domestic
+    ],
+    "Chronopost": [
+        r"\b([A-Z]{2}\d{8}FR)\b",  # Chronopost
+        r"\b(\d{14})\b",  # Chronopost domestic
+    ],
+    "Correos": [
+        r"\b([A-Z]{2}\d{9}ES)\b",  # Correos international
+        r"\b(P\d{10,12})\b",  # Correos domestic
+    ],
+    "SEUR": [
+        r"\b([A-Z]{3}\d{10})\b",  # SEUR tracking
+    ],
+    "Poste Italiane": [
+        r"\b([A-Z]{2}\d{9}IT)\b",  # Poste Italiane international
+        r"\b(0\d{12})\b",  # Poste Italiane domestic
+    ],
+    "SDA": [
+        r"\b([A-Z]{2}\d{9}IT)\b",  # SDA tracking
+    ],
+    "BRT": [
+        r"\b(\d{12})\b",  # BRT tracking
+    ],
 }
 
 # Carrier detection patterns in email body
