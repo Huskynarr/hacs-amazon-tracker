@@ -79,15 +79,16 @@ class PackageStore:
                         existing["status"] = new_status
                         updated = True
 
-                # Update fields if they are newly available
+                # Fill fields only if current value is missing (never overwrite existing)
                 for field in [
                     "carrier",
                     "tracking_number",
                     "estimated_delivery",
                     "product_name",
                 ]:
-                    if pkg.get(field) and not existing.get(field):
-                        existing[field] = pkg[field]
+                    new_val = pkg.get(field)
+                    if new_val and not existing.get(field):
+                        existing[field] = new_val
                         updated = True
 
                 # Always update last_updated
