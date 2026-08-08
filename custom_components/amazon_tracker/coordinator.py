@@ -42,6 +42,7 @@ class AmazonTrackerCoordinator(DataUpdateCoordinator):
             hass,
             _LOGGER,
             name=DOMAIN,
+            config_entry=entry,
             update_interval=DEFAULT_SCAN_INTERVAL,
         )
         self._entry = entry
