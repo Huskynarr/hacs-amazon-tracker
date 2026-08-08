@@ -5,9 +5,11 @@
 [![license](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![tests](https://img.shields.io/badge/tests-80%20passed-brightgreen.svg)](.github/workflows/hassfest.yml)
 [![python](https://img.shields.io/badge/Python-3.12%2B-blue.svg)](https://www.python.org/)
-[![HA](https://img.shields.io/badge/Home%20Assistant-2024.1%2B-41bdf5.svg)](https://www.home-assistant.io/)
+[![HA](https://img.shields.io/badge/Home%20Assistant-2025.6%2B-41bdf5.svg)](https://www.home-assistant.io/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-ff69b4.svg)](https://github.com/sponsors/Huskynarr)
+
+[![In HACS öffnen](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Huskynarr&repository=hacs-amazon-tracker&category=integration)
 
 Track Amazon packages by parsing order, shipping, and delivery notification emails via IMAP. No web scraping, no Amazon login — just your email inbox.
 
