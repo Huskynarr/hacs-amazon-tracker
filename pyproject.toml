@@ -70,3 +70,9 @@ force-sort-within-sections = true
 
 [tool.ruff.format]
 docstring-code-format = true
+
+[tool.basedpyright]
+include = ["custom_components"]
+reportMissingImports = false
+reportMissingModuleSource = false
+typeCheckingMode = "basic"
