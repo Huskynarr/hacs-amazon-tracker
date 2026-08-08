@@ -35,36 +35,35 @@ async def async_setup_entry(
     """Set up the Amazon Package Tracker sensors."""
     coordinator: AmazonTrackerCoordinator = hass.data[DOMAIN][entry.entry_id]
 
-    # Track which order numbers already have entities
-    tracked_orders: set[str] = set()
+    tracked_entities: dict[str, AmazonPackageSensor] = {}
 
-    # Add pending packages sensor
     async_add_entities([PendingPackagesSensor(coordinator, entry)])
 
     @callback
-    def _async_add_new_sensors() -> None:
-        """Add sensors for new packages."""
+    def _async_update_sensors() -> None:
+        """Add sensors for new packages, remove sensors for gone packages."""
         if coordinator.data is None:
             return
 
-        new_entities = []
-        for order_number in coordinator.data:
-            if order_number not in tracked_orders:
-                tracked_orders.add(order_number)
-                new_entities.append(
-                    AmazonPackageSensor(coordinator, entry, order_number)
-                )
+        active_orders = set(coordinator.data.keys())
 
-        if new_entities:
-            async_add_entities(new_entities)
-            _LOGGER.debug("Added %d new package sensors", len(new_entities))
+        for order_number in active_orders:
+            if order_number not in tracked_entities:
+                sensor = AmazonPackageSensor(coordinator, entry, order_number)
+                tracked_entities[order_number] = sensor
+                async_add_entities([sensor])
+                _LOGGER.debug("Added sensor for order %s", order_number)
 
-    # Add sensors for existing packages
-    _async_add_new_sensors()
+        for order_number in list(tracked_entities.keys()):
+            if order_number not in active_orders:
+                sensor = tracked_entities.pop(order_number)
+                sensor.async_remove()
+                _LOGGER.debug("Removed sensor for order %s", order_number)
 
-    # Listen for coordinator updates to add new package sensors
+    _async_update_sensors()
+
     entry.async_on_unload(
-        coordinator.async_add_listener(_async_add_new_sensors)
+        coordinator.async_add_listener(_async_update_sensors)
     )
 
 
