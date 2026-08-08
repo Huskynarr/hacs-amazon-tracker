@@ -327,7 +327,15 @@ def build_imap_search_query(domains: list[str], since_date: date) -> str:
         if domain_config:
             senders.append(domain_config["sender"])
 
-    since_str = since_date.strftime("%d-%b-%Y")
+    english_months = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+    ]
+    since_str = (
+        f"{since_date.day:02d}-"
+        f"{english_months[since_date.month - 1]}-"
+        f"{since_date.year}"
+    )
 
     if not senders:
         return f"(SINCE {since_str})"
@@ -335,8 +343,6 @@ def build_imap_search_query(domains: list[str], since_date: date) -> str:
     if len(senders) == 1:
         return f'(FROM "{senders[0]}" SINCE {since_str})'
 
-    # Multiple senders: OR query
-    # IMAP OR takes exactly 2 arguments, so we need to nest them
     parts = [f'FROM "{s}"' for s in senders]
     query = parts[0]
     for part in parts[1:]:
